@@ -1,4 +1,4 @@
-package DSA_with_kunal.Questions.SmallestAndLargestDigit;
+package DSA_with_kunal.CRT.Questions.SmallestAndLargestDigit;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package DSA_with_kunal.Questions.DigitSumUntilSingleDigit;
+package DSA_with_kunal.CRT.Questions.DigitSumUntilSingleDigit;
 
 public class Main {
     public static void main(String[] args) {

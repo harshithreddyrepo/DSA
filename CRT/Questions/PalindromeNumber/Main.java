@@ -1,4 +1,4 @@
-package DSA_with_kunal.Questions.PalindromeNumber;
+package DSA_with_kunal.CRT.Questions.PalindromeNumber;
 
 public class Main {
     public static void main(String[] args) {

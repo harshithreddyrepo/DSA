@@ -1,4 +1,4 @@
-package DSA_with_kunal.Questions.EvenOrOddSum;
+package DSA_with_kunal.CRT.Questions.EvenOrOddSum;
 
 import java.util.Scanner;
 
