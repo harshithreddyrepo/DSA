@@ -1,4 +1,4 @@
-package DSA_with_kunal.Recursion.concept.fibonacciSeries;
+package DSA_with_kunal.Recursion.problems.easy.fibonacciSeries;
 
 public class Main {
     public static void main(String[] args) {
