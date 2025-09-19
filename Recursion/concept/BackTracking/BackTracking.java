@@ -1,4 +1,4 @@
-package DSA_with_kunal.Recursion.concept.SubsetPattern.MazeGame;
+package DSA_with_kunal.Recursion.concept.BackTracking;
 
 public class BackTracking {
     public static void main(String[] args) {
