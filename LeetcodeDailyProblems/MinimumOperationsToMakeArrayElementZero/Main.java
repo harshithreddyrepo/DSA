@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.MinimumOperationsToMakeArrayElementZero;
+package DSA_with_kunal.LeetcodeDailyProblems.MinimumOperationsToMakeArrayElementZero;
 
 public class Main {
     public static void main(String[] args) {

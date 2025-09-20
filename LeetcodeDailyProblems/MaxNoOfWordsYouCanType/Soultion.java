@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.MaxNoOfWordsYouCanType;
+package DSA_with_kunal.LeetcodeDailyProblems.MaxNoOfWordsYouCanType;
 
 class Solution {
     public static void main(String[] args) {

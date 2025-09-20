@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.VowelSpellChecker;
+package DSA_with_kunal.LeetcodeDailyProblems.VowelSpellChecker;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.SortVowelsInString;
+package DSA_with_kunal.LeetcodeDailyProblems.SortVowelsInString;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.MinimumOperationsToMakeTheIntegerZero;
+package DSA_with_kunal.LeetcodeDailyProblems.MinimumOperationsToMakeTheIntegerZero;
 
 public class Solution {
     public static void main(String[] args) {

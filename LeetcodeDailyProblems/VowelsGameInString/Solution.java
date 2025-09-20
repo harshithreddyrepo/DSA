@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.VowelsGameInString;
+package DSA_with_kunal.LeetcodeDailyProblems.VowelsGameInString;
 
 import java.util.ArrayList;
 import java.util.List;

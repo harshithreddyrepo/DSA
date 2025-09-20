@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.Find_N_UniqueIntegersSumUpToZero;
+package DSA_with_kunal.LeetcodeDailyProblems.Find_N_UniqueIntegersSumUpToZero;
 
 import java.util.Arrays;
 

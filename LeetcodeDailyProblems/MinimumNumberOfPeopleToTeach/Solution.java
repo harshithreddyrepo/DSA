@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.MinimumNumberOfPeopleToTeach;
+package DSA_with_kunal.LeetcodeDailyProblems.MinimumNumberOfPeopleToTeach;
 
 import java.util.HashSet;
 import java.util.Set;

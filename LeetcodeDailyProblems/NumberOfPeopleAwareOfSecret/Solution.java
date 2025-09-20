@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.NumberOfPeopleAwareOfSecret;
+package DSA_with_kunal.LeetcodeDailyProblems.NumberOfPeopleAwareOfSecret;
 import java.util.HashMap;
 class Solution {
     static final int M = 1000000007;

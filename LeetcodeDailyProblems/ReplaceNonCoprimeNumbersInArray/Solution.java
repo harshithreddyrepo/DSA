@@ -1,4 +1,4 @@
-package DSA_with_kunal.LeetcodeDailyStreak.ReplaceNonCoprimeNumbersInArray;
+package DSA_with_kunal.LeetcodeDailyProblems.ReplaceNonCoprimeNumbersInArray;
 import java.util.ArrayList;
 import java.util.List;
 class Solution {

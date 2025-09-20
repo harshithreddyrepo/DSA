@@ -2,11 +2,14 @@ package DSA_with_kunal.Recursion.concept.BackTracking.N_Queens;
 
 public class Main {
     public static void main(String[] args) {
-       boolean[][] board=new boolean[5][5];
-        System.out.println(nQueensCount( board,0));
+       boolean[][] board=new boolean[4][4];
+       // System.out.println(nQueensCount1( board,0));
+        System.out.println(nQueensCount2(board,0,0));
     }
 
-    public static int nQueensCount(boolean[][] board,int row){
+
+    // Using for-loop
+    public static int nQueensCount1(boolean[][] board,int row){
         if(row==board.length){
             return 1;
         }
@@ -14,10 +17,29 @@ public class Main {
         for(int col=0;col<board[0].length;col++){
             if(validCell(row, col,board)){
                 board[row][col]=true;
-                 count+=nQueensCount(board,row+1);
+                 count+=nQueensCount1(board,row+1);
                 board[row][col]=false;
             }
         }
+        return count;
+    }
+
+    // Without using for-loop (i.e. purely recursive)
+    public static int nQueensCount2(boolean[][] board, int row, int col){
+        // Base condition (Bottom up recursion)
+        if(row==board.length){
+            return 1;
+        }
+        if(col==board[0].length){
+            return 0;
+        }
+        int count=0;
+        if(validCell(row, col, board )){
+            board[row][col]=true;
+            count+=nQueensCount2(board,row+1,0);
+            board[row][col]=false;
+        }
+        count+=nQueensCount2(board,row,col+1);
         return count;
     }
 
