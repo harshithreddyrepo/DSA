@@ -30,15 +30,18 @@ public class Main {
            return count;
        }
        if(checkVlaidCell(board,row,col)){
-           if(col<board[0].length-1){
-               board[row][col]=true;
-               count=nKnightsCount(board,row,col+1,k+1);
-               board[row][col]=false;
-           }else{
-               board[row][col]=true;
-               count+=nKnightsCount(board,row+1,0,k+1);
-               board[row][col]=false;
-           }
+//           if(col<board[0].length-1){
+//               board[row][col]=true;
+//               count=nKnightsCount(board,row,col+1,k+1);
+//               board[row][col]=false;
+//           }else{
+//               board[row][col]=true;
+//               count+=nKnightsCount(board,row+1,0,k+1);
+//               board[row][col]=false;
+//           }
+           board[row][col]=true;
+           count=nKnightsCount(board,row,col+1,k+1);
+           board[row][col]=false;
        }
        count+=nKnightsCount(board,row,col+1,k);
        return count;
