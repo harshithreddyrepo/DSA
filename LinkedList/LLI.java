@@ -10,6 +10,8 @@ package DSA_with_kunal.LinkedList;
      -> E  deleteLast() or delete()
      -> E delete(int index)
      -> boolean delete(E object)
+     3.Update
+     -> E update(int index) // updates the value and returns the previous value if present.
      3.Search
      -> boolean search(E object)
      4.display
@@ -17,17 +19,20 @@ package DSA_with_kunal.LinkedList;
 */
 public interface LLI<E> {
     // INSERT
-    void insert(E object);
-    void insertFirst(E object);
-    void insertLast(E object);
-    boolean insertAt(int index, E object);
+    void insert(E data);
+    void insertFirst(E data);
+    void insertLast(E data);
+    boolean insertAt(int index, E data);
     // DELETE
     E deleteFirst();
     E deleteLast();
     E delete(int index);
-    boolean delete(E object);
+    boolean delete(E data);
+    // UPDATE
+    E update(int index, E data);
+
     // SEARCH
-    boolean search(E object);
+    boolean search(E data);
     // Display
     void display();
 }
