@@ -50,6 +50,11 @@ public class CircularLinkedList <E> implements LLI <E>{
     }
 
     @Override
+    public E update(int index, E data) {
+        return null;
+    }
+
+    @Override
     public boolean search(E object) {
         return false;
     }

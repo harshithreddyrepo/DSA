@@ -10,7 +10,7 @@ package DSA_with_kunal.LinkedList;
 public class SinglyLinkedList <E> implements LLI <E>{
     private Node<E> head;  // head=null
     private Node<E> tail;  // tail=null;
-    private int size;
+    public int size;
 
     private class Node<E>{
         private E data;
@@ -202,5 +202,6 @@ public class SinglyLinkedList <E> implements LLI <E>{
             System.out.print(temp.data.toString()+" ");
             temp=temp.next;
         }
+        System.out.println();
     }
 }
