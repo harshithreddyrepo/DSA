@@ -62,6 +62,11 @@ public class CircularDoublyLinkedList <E> implements LLI <E> {
     }
 
     @Override
+    public E get(int index) {
+        return null;
+    }
+
+    @Override
     public void display() {
 
     }

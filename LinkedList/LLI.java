@@ -18,21 +18,26 @@ package DSA_with_kunal.LinkedList;
      -> void display()
 */
 public interface LLI<E> {
+
     // INSERT
     void insert(E data);
     void insertFirst(E data);
     void insertLast(E data);
     boolean insertAt(int index, E data);
+
     // DELETE
     E deleteFirst();
     E deleteLast();
     E delete(int index);
     boolean delete(E data);
+
     // UPDATE
     E update(int index, E data);
 
     // SEARCH
     boolean search(E data);
-    // Display
+
+    // Fetch
+    E get(int index);
     void display();
 }
