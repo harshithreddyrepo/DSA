@@ -20,10 +20,9 @@ package DSA_with_kunal.LinkedList;
 public interface LLI<E> {
 
     // INSERT
-    void insert(E data);
     void insertFirst(E data);
     void insertLast(E data);
-    boolean insertAt(int index, E data);
+    boolean insert(int index, E data);
 
     // DELETE
     E deleteFirst();

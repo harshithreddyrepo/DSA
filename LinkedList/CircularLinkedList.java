@@ -28,29 +28,6 @@ public class CircularLinkedList<E> implements LLI<E> {
     }
 
     @Override
-    public void insert(E val) {
-        Node<E> node = new Node<>(val);
-        if (head == null) {
-            head = node;
-            tail = node;
-            node.next = node;
-            size++;
-            return;
-        }
-        if (head == tail) {
-            head.next = node;
-            node.next = head;
-            tail = node;
-            size++;
-            return;
-        }
-        tail.next = node;
-        node.next = head;
-        tail = node;
-        size++;
-    }
-
-    @Override
     public void insertFirst(E val) {
         Node<E> node = new Node<>(val);
         if (head == null) {
@@ -98,7 +75,7 @@ public class CircularLinkedList<E> implements LLI<E> {
     }
 
     @Override
-    public boolean insertAt(int index, E val) {
+    public boolean insert(int index, E val) {
         if (index < 0) {
             return false;
         }

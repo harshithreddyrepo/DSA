@@ -3,16 +3,14 @@ package DSA_with_kunal.LinkedList;
 public class Main {
     public static void main(String[] args) {
         SinglyLinkedList<Integer> sll=new SinglyLinkedList<>();
+        sll.insertLast(3);
+        sll.insertLast(5);
+        sll.insertLast(9);
+        sll.insertLast(1);
 
-        sll.insert(10);
-        sll.insert(20);
-        sll.insert(30);
-        sll.insert(40);
-        System.out.println(sll.size);
-       sll.update(2,33);
-       sll.display();
-        System.out.println(sll.search(33));
+        sll.insertRec(3,7);
+        sll.insertRec(0,4);
 
-
+        sll.display();
     }
 }

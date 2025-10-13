@@ -30,20 +30,6 @@ public class DoublyLinkedList<E> implements LLI<E> {
     }
 
     @Override
-    public void insert(E data) {
-        Node<E> node = new Node<>(data);
-        if (tail == null) {
-            head = node;
-            tail = node;
-        } else {
-            tail.next = node;
-            node.prev = tail;
-            tail = node;
-        }
-        size++;
-    }
-
-    @Override
     public void insertFirst(E data) {
         Node<E> node = new Node<>(data);
         if (head == null) {
@@ -72,7 +58,7 @@ public class DoublyLinkedList<E> implements LLI<E> {
     }
 
     @Override
-    public boolean insertAt(int index, E data) {
+    public boolean insert(int index, E data) {
         if (index < 0 && -1 * index <= size) {
             index = size + index;
         }

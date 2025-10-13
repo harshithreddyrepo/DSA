@@ -27,19 +27,6 @@ public class SinglyLinkedList<E> implements LLI<E> {
     }
 
     @Override
-    public void insert(E data) {
-        Node<E> node = new Node<>(data);
-        if (tail == null) {
-            head = node;
-            tail = node;
-        } else {
-            tail.next = node;
-            tail = node;
-        }
-        size++;
-    }
-
-    @Override
     public void insertFirst(E data) {
         Node<E> node = new Node<>(data);
         if (head == null) {
@@ -66,7 +53,7 @@ public class SinglyLinkedList<E> implements LLI<E> {
     }
 
     @Override
-    public boolean insertAt(int index, E data) {
+    public boolean insert(int index, E data) {
         if (index < 0 && -1 * index <= size) {
             index = size + index;
         }
@@ -92,6 +79,23 @@ public class SinglyLinkedList<E> implements LLI<E> {
         temp.next = node;
         size++;
         return true;
+    }
+
+
+    public  void insertRec(int index, E val){
+        if(index>=0 && index<=size){
+           head= insertRec(index,head,val);
+        }
+    }
+    public Node<E> insertRec(int n, Node<E> cur, E val){
+        if(n==0){
+            Node<E> node=new Node<>(val);
+            node.next=cur;
+            size++;
+            return node;
+        }
+        cur.next=insertRec(n-1,cur.next,val);
+        return cur;
     }
 
     @Override
