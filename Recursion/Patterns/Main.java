@@ -21,6 +21,39 @@ package DSA_with_kunal.Recursion.Patterns;
 
  */
 
+
+/*
+
+ pattern 3:
+     * * * * *
+     * * * *
+     * * *
+     * *
+     *
+     *
+     * *
+     * * *
+     * * * *
+     * * * * *
+
+*/
+
+
+/*
+
+   Pattern 4:
+     *
+     * *
+     * * *
+     * * * *
+     * * * * *
+     * * * * *
+     * * * *
+     * * *
+     * *
+     *
+
+ */
 public class Main {
     public static void main(String[] args) {
         int row=5;
