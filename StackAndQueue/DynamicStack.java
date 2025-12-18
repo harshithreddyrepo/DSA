@@ -1,6 +1,4 @@
-package DSA_with_kunal.Stack;
-
-import java.util.Arrays;
+package DSA_with_kunal.StackAndQueue;
 
 public class DynamicStack extends CustomStack{
     public DynamicStack(){

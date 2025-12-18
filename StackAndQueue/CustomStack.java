@@ -1,6 +1,6 @@
-package DSA_with_kunal.Stack;
+package DSA_with_kunal.StackAndQueue;
 /*
-  Methods in Stack:
+  Methods in StackAndQueue:
     1.push()
     2.pop()
     3.peek()
