@@ -18,6 +18,7 @@ public class Main {
             this.right = right;
         }
     }
+         // ** BFS(Breadth-First-Search)  **\\
     /*
      Q1. Binary Tree Level Order Traversal
      => Given the root of a binary tree, return the level order traversal of its nodes' values.
@@ -212,10 +213,10 @@ public class Main {
         if(root==null){
             return null;
         }
-        helper(root);
+        preorderHelper(root);
         return root;
     }
-    public void helper(Node node){
+    public void preorderHelper(Node node){
         if(node.left==null){
             return;
         }
@@ -225,7 +226,7 @@ public class Main {
             if(temp.next!=null) temp.right.next=temp.next.left;
             temp=temp.next;
         }
-        helper(node.left);
+        preorderHelper(node.left);
     }
 
     /*
@@ -365,5 +366,281 @@ public class Main {
             }
         }
         return true;
+    }
+
+           //  ** DFS(Depth-First-Search) **  \\
+    /*
+     Q10. Binary Tree Diameter
+     =>Given the root of a binary tree, return the length of the diameter of the tree.
+
+       The diameter of a binary tree is the length of the longest path between any two nodes
+       in a tree. This path may or may not pass through the root.
+
+       The length of a path between two nodes is represented by the number of edges between them.
+     */
+           int dia=0;
+    public int diameterOfBinaryTree(TreeNode root) {
+        diaHelper(root);
+        return dia;
+    }
+    public int diaHelper(TreeNode node){
+        if(node==null){
+            return -1;
+        }
+        int left=diaHelper(node.left);
+        int right=diaHelper(node.right);
+        dia=Math.max(dia,left+right+2);
+        return Math.max(left,right)+1;
+    }
+
+    /*
+     Q11. Invert Binary Tree
+     =>Given the root of a binary tree, invert the tree, and return its root.
+     */
+    public TreeNode invertTree(TreeNode root) {
+        if(root==null){
+            return null;
+        }
+        TreeNode left=invertTree(root.left);
+        TreeNode right=invertTree(root.right);
+        root.left=right;
+        root.right=left;
+        return root;
+    }
+
+
+    /*
+     Q12. Maximum Depth of Binary Tree
+     =>Given the root of a binary tree, return its maximum depth.
+
+       A binary tree's maximum depth is the number of nodes along the longest path
+       from the root node down to the farthest leaf node.
+     */
+    public int maxDepth(TreeNode root) {
+        if(root==null){
+            return 0;
+        }
+        return Math.max(maxDepth(root.left),maxDepth(root.right))+1;
+    }
+
+    /*
+     Q13. Convert Sorted Array To Binary Search Tree
+     =>Given an integer array nums where the elements are sorted in ascending order,
+       convert it to a height-balanced binary search tree.
+     */
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return sortedArrayHelper(nums, 0, nums.length);
+    }
+    public TreeNode sortedArrayHelper(int[] nums, int start, int end){
+        if(start==end){
+            return null;
+        }
+        int mid=start+(end-start)/2;
+        TreeNode left=sortedArrayHelper(nums, start, mid);
+        TreeNode right=sortedArrayHelper(nums, mid+1, end);
+        TreeNode node=new TreeNode(nums[mid], left, right);
+        return node;
+    }
+
+    /*
+     Q14. Flatten Binary Tree to LinkedList
+     =>Given the root of a binary tree, flatten the tree into a "linked list":
+
+       The "linked list" should use the same TreeNode class where the right child pointer
+       points to the next node in the list and the left child pointer is always null.
+
+       The "linked list" should be in the same order as a pre-order traversal of the binary tree.
+     */
+    public void flatten(TreeNode root) {
+        if(root==null){
+            return;
+        }
+        if(root.left==null){
+            flatten(root.right);
+        }else{
+            TreeNode right=root.right;
+            root.right=root.left;
+            rightMost(root).right=right;
+            root.left=null;
+            flatten(root.right);
+        }
+    }
+    public TreeNode rightMost(TreeNode node){
+        if(node.right==null){
+            return node;
+        }
+        return rightMost(node.right);
+    }
+
+    /*
+     Q15. Validate Binary Search Tree
+     =>Given the root of a binary tree, determine if it is a valid binary search tree (BST).
+
+       A valid BST is defined as follows:
+
+        i.The left subtree of a node contains only nodes with keys strictly less than the node's key.
+       ii.The right subtree of a node contains only nodes with keys strictly greater than the node's key.
+      iii.Both the left and right subtrees must also be binary search trees.
+     */
+    public boolean isValidBST(TreeNode root) {
+        Integer ll=null;
+        Integer rl=null;
+        return validateHelper(root, ll, rl);
+    }
+    public boolean validateHelper(TreeNode node, Integer ll, Integer rl){
+        if(node==null){
+            return true;
+        }
+        if((ll!=null && node.val<=ll) || (rl!=null && node.val>=rl)){
+            return false;
+        }
+        if((node.left!=null && node.left.val>=node.val) || (node.right!=null && node.right.val<=node.val)){
+            return false;
+        }
+        return validateHelper(node.left, ll, node.val) && validateHelper(node.right, node.val, rl);
+    }
+
+    /*
+     Q16. Lowest Common Ancestor
+     =>Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+
+       According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between
+       two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a
+       node to be a descendant of itself).”
+     */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==null){
+            return null;
+        }
+        if(root==p || root==q){
+            return root;
+        }
+        TreeNode left=lowestCommonAncestor(root.left, p, q);
+        TreeNode right=lowestCommonAncestor(root.right, p, q);
+        if(left!=null && right!=null){
+            return root;
+        }
+        if(left!=null){
+            return left;
+        }
+        return right;
+    }
+
+    /*
+     Q17. Kth Smallest Element in BST
+     =>Given the root of a binary search tree, and an integer k, return the kth smallest value
+      (1-indexed) of all the values of the nodes in the tree.
+     */
+    int count=0;
+    public int kthSmallest(TreeNode root, int k) {
+        if(root==null){
+            return -1;
+        }
+        int left=kthSmallest(root.left,k);
+        if(left!=-1){
+            return left;
+        }
+        count++;
+        if(count==k){
+            return root.val;
+        }
+        return kthSmallest(root.right,k);
+    }
+
+    /*
+     Q18. Construct Binary Tree form Preorder and Inorder Traversal
+     =>Given two integer arrays preorder and inorder where preorder is the preorder traversal of
+      a binary tree and inorder is the inorder traversal of the same tree, construct and return the binary tree.
+     */
+    int p=0;
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        return preorderHelper(preorder, inorder, 0, inorder.length);
+    }
+    public TreeNode preorderHelper(int[] preorder, int[] inorder, int low, int high){
+        if(low==high){
+            return null;
+        }
+        TreeNode node=new TreeNode(preorder[p]);
+
+        // find the index of node value in inorder.
+        int i=low;
+        while(inorder[i]!=preorder[p]){
+            i++;
+        }
+        p++;
+        node.left= preorderHelper(preorder, inorder, low, i);
+        node.right= preorderHelper(preorder, inorder, i+1, high);
+        return node;
+    }
+
+    /*
+     Q19. Serialize and Deserialize Binary Tree
+     =>Serialization is the process of converting a data structure or object into a sequence
+      of bits so that it can be stored in a file or memory buffer, or transmitted across a
+      network connection link to be reconstructed later in the same or another computer environment.
+
+      Design an algorithm to serialize and deserialize a binary tree. There is no restriction
+      on how your serialization/deserialization algorithm should work. You just need to ensure
+      that a binary tree can be serialized to a string and this string can be deserialized to the
+      original tree structure.
+     */
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        if(root==null){
+            return null;
+        }
+        String left=seHelper(root.left, new StringBuilder()).toString();
+        String right=seHelper(root.right, new StringBuilder()).toString();
+        return root.val+left+right;
+    }
+    private StringBuilder seHelper(TreeNode node, StringBuilder serialize){
+        if(node==null){
+            serialize.append(",*");
+            return serialize;
+        }
+        StringBuilder cur=serialize.append(","+node.val);
+        StringBuilder left=seHelper(node.left, cur);
+        return seHelper(node.right, left);
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        if(data==null){
+            return null;
+        }
+        String[] arr=data.split(",");
+        return deHelper(arr);
+    }
+    int i=0;
+    private TreeNode deHelper(String[] arr){
+        if(arr[i].equals("*")){
+            i++;
+            return null;
+        }
+        TreeNode node=new TreeNode(Integer.parseInt(arr[i]));
+        i++;
+        node.left=deHelper(arr);
+        node.right=deHelper(arr);
+        return node;
+    }
+
+    /*
+     Q20. Path Sum
+     =>Given the root of a binary tree and an integer targetSum, return true if the tree has
+      a root-to-leaf path such that adding up all the values along the path equals targetSum.
+     */
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        if(root==null){
+            return false;
+        }
+        if(root.left==null && root.right==null){
+            return targetSum-root.val==0;
+        }
+
+        boolean left=hasPathSum(root.left, targetSum-root.val);
+        if(left){
+            return left;
+        }
+        return hasPathSum(root.right, targetSum-root.val);
     }
 }
