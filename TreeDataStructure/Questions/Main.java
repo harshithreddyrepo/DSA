@@ -643,4 +643,94 @@ public class Main {
         }
         return hasPathSum(root.right, targetSum-root.val);
     }
+
+    /*
+    Q21. Sum Root to Leaf Numbers
+    =>You are given the root of a binary tree containing digits from 0 to 9 only.
+
+      Each root-to-leaf path in the tree represents a number.
+
+      For example, the root-to-leaf path 1 -> 2 -> 3 represents the number 123.
+      Return the total sum of all root-to-leaf numbers. Test cases are generated so that
+      the answer will fit in a 32-bit integer.
+
+      A leaf node is a node with no children.
+     */
+    public int sumNumbers(TreeNode root) {
+        return sumNumberHelper(root, 0);
+    }
+    public int sumNumberHelper(TreeNode node, int val){
+        if(node==null){
+            return 0;
+        }
+        if(node.left==null && node.right==null){
+            return val*10+node.val;
+        }
+        return sumNumberHelper(node.left,val*10+node.val)+ sumNumberHelper(node.right,val*10+node.val) ;
+    }
+
+    /*
+     Q22. Binary Tree Maximum Path Sum
+     =>A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in
+       the sequence has an edge connecting them. A node can only appear in the sequence at
+       most once. Note that the path does not need to pass through the root.
+
+       The path sum of a path is the sum of the node's values in the path.
+
+       Given the root of a binary tree, return the maximum path sum of any non-empty path.
+     */
+    int maxPathSum=Integer.MIN_VALUE;
+    public int maxPathSum(TreeNode root) {
+        maxPathSumHelper(root);
+        return maxPathSum;
+    }
+
+    public int maxPathSumHelper(TreeNode node){
+        if(node == null){
+            return 0;
+        }
+        int left= maxPathSumHelper(node.left);
+        int right= maxPathSumHelper(node.right);
+
+        // Filter the nodes that contribute to reduce the path sum.
+        left=Math.max(0,left);
+        right=Math.max(0,right);
+
+        int pathSum=node.val+left+right;
+        maxPathSum=Math.max(maxPathSum, pathSum);
+        return left>right?node.val+left:node.val+right;
+    }
+
+    /*
+     Q23. Path Sum III
+     =>Given the root of a binary tree and an integer targetSum, return the number of paths
+       where the sum of the values along the path equals targetSum.
+
+      The path does not need to start or end at the root or a leaf, but it must go downwards
+      (i.e., traveling only from parent nodes to child nodes).
+     */
+    int pathSumCount=0;
+    public int pathSum(TreeNode root, int targetSum) {
+        Map<Long, Integer> pathSum=new HashMap<>();
+        pathSum.put(0l,1);
+        helper(root, pathSum, 0l, targetSum);
+        return pathSumCount;
+    }
+    private void helper(TreeNode node, Map<Long ,Integer> pathSum, Long prefixSum, int target){
+        if(node==null){
+            return;
+        }
+        Long sum=prefixSum+node.val;
+        if(pathSum.containsKey(sum-target)){
+            count+=pathSum.get(sum-target);
+        }
+        pathSum.put(sum,pathSum.getOrDefault(sum,0)+1);
+        helper(node.left,pathSum, sum, target);
+        helper(node.right,pathSum, sum, target);
+        if(pathSum.get(sum)==1){
+            pathSum.remove(sum);
+            return;
+        }
+        pathSum.put(sum,pathSum.get(sum)-1);
+    }
 }
