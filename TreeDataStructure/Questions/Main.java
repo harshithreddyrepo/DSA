@@ -713,10 +713,10 @@ public class Main {
     public int pathSum(TreeNode root, int targetSum) {
         Map<Long, Integer> pathSum=new HashMap<>();
         pathSum.put(0l,1);
-        helper(root, pathSum, 0l, targetSum);
+        postorderHelper(root, pathSum, 0l, targetSum);
         return pathSumCount;
     }
-    private void helper(TreeNode node, Map<Long ,Integer> pathSum, Long prefixSum, int target){
+    private void postorderHelper(TreeNode node, Map<Long ,Integer> pathSum, Long prefixSum, int target){
         if(node==null){
             return;
         }
@@ -725,12 +725,107 @@ public class Main {
             count+=pathSum.get(sum-target);
         }
         pathSum.put(sum,pathSum.getOrDefault(sum,0)+1);
-        helper(node.left,pathSum, sum, target);
-        helper(node.right,pathSum, sum, target);
+        postorderHelper(node.left,pathSum, sum, target);
+        postorderHelper(node.right,pathSum, sum, target);
         if(pathSum.get(sum)==1){
             pathSum.remove(sum);
             return;
         }
         pathSum.put(sum,pathSum.get(sum)-1);
     }
+
+    /*
+     Q24. Same Tree
+     =>Given the roots of two binary trees p and q, write a function to check if they
+      are the same or not.
+
+       Two binary trees are considered the same if they are structurally identical, and
+       the nodes have the same value.
+     */
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if(p==null && q==null){
+            return true;
+        }
+        if(p==null || q==null){
+            return false;
+        }
+        boolean left=isSameTree(p.left, q.left);
+        boolean right=isSameTree(p.right, q.right);
+        return p.val==q.val && left && right;
+    }
+
+    /*
+     Q25. Construct Binary Tree From Inorder and Postorder Traversal
+     =>Given two integer arrays inorder and postorder where inorder is the inorder traversal
+       of a binary tree and postorder is the postorder traversal of the same tree, construct
+       and return the binary tree.
+     */
+    int post=0;
+    public TreeNode buildTreePostorder(int[] inorder, int[] postorder) {
+        post=postorder.length-1;
+        return postorderHelper(inorder, postorder, 0, inorder.length);
+    }
+    public TreeNode postorderHelper(int[] inorder, int[] postorder, int low, int high){
+        if(low==high){
+            return null;
+        }
+        TreeNode node=new TreeNode(postorder[post]);
+
+        // find the index of node value in inorder.
+        int i=low;
+        while(inorder[i]!=postorder[post]){
+            i++;
+        }
+        post--;
+        node.right= postorderHelper(inorder, postorder, i+1, high);
+        node.left= postorderHelper(inorder, postorder, low, i);
+        return node;
+    }
+
+    /*
+     Q26. Binary Search Tree Iterator
+     =>Implement the BSTIterator class that represents an iterator over the in-order
+      traversal of a binary search tree (BST):
+
+      BSTIterator(TreeNode root) Initializes an object of the BSTIterator class.
+      The root of the BST is given as part of the constructor. The pointer should be
+      initialized to a non-existent number smaller than any element in the BST.
+
+     -> boolean hasNext() Returns true if there exists a number in the traversal to the
+      right of the pointer, otherwise returns false.
+     ->int next() Moves the pointer to the right, then returns the number at the pointer.
+
+     Notice that by initializing the pointer to a non-existent smallest number, the first
+     call to next() will return the smallest element in the BST.
+
+     You may assume that next() calls will always be valid. That is, there will be at least
+     a next number in the in-order traversal when next() is called
+     */
+    class BSTIterator {
+        int ptr;
+        List<Integer> list;
+        public BSTIterator(TreeNode root) {
+            ptr=-1;
+            list=new ArrayList<>();
+            constructList(root, list);
+        }
+        private void constructList(TreeNode node, List<Integer> list){
+            if(node==null){
+                return;
+            }
+            constructList(node.left, list);
+            list.add(node.val);
+            constructList(node.right, list);
+        }
+
+        public int next() {
+            return list.get(++ptr);
+        }
+
+        public boolean hasNext() {
+            return ptr<list.size()-1;
+        }
+    }
+
+
 }
