@@ -827,5 +827,65 @@ public class Main {
         }
     }
 
+   /*
+   Q27. Count Complete Tree Nodes
+   =>Given the root of a complete binary tree, return the number of the nodes in the tree.
+     Design an algorithm that runs in less than O(n) time complexity.
+            Core Idea:
+                        node
+                      /      \
+                   left     right
+                   /           \
+                 left         right
+                 /               \
+               left             right
+             => ensure that all the levels are completely filled and return the no. of nodes directly using the formula
+                2^(h)-1 (consider height starts from 1).
+             => Time Complexity:
+                   O((log(n))^2); which is efficient than O(n).
+    */
+   public int countNodes(TreeNode root) {
+       if(root==null){
+           return 0;
+       }
+       int lh=leftHeight(root);
+       int rh=rightHeight(root);
+       if(lh==rh){
+           return (int)Math.pow(2,lh)-1;
+       }
+       return 1+countNodes(root.left)+countNodes(root.right);
+   }
+    private int leftHeight(TreeNode node){
+        if(node==null){
+            return 0;
+        }
+        return 1+leftHeight(node.left);
+    }
+    private int rightHeight(TreeNode node){
+        if(node==null){
+            return 0;
+        }
+        return 1+rightHeight(node.right);
+    }
 
+    /*
+    Q28. Minimum Absolute Difference In BST
+    =>Given the root of a Binary Search Tree (BST), return the minimum absolute difference
+      between the values of any two different nodes in the tree.
+     */
+    int minAbsDiff=Integer.MAX_VALUE;
+    public int getMinimumDifference(TreeNode root) {
+        helper(root, null, minAbsDiff);
+        return minAbsDiff;
+    }
+    private Integer helper(TreeNode node, Integer prev, int min){
+        if(node==null || min==1){
+            return prev;
+        }
+        prev=helper(node.left, prev, minAbsDiff);
+        if(prev!=null){
+            minAbsDiff=Math.min(minAbsDiff,node.val-prev); // prev is always less than value of current node(Sorted order)
+        }
+        return helper(node.right, node.val, minAbsDiff);
+    }
 }

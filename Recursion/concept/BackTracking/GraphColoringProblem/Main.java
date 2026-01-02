@@ -13,14 +13,14 @@ public class Main {
                 {0, 1, 0, 0, 0},
                 { 0, 0, 1, 0, 0}
         };
-//        String[] colorPallet=new String[5];
-//        String[] colors={"Red","Green","Blue"};
-//        System.out.println(graphColoring(graph,colors,colorPallet,0));
+        String[] colorPallet=new String[5];
+        String[] colors={"Red","Green","Blue"};
+        System.out.println(graphColoring(graph,colors,colorPallet,0));
 
-        int[] colorPallet=new int[5];
-        Arrays.fill(colorPallet, -1);
-        int colors=3;
-        System.out.println(mColoringDecision(graph,colorPallet,colors,0));
+//        int[] colorPallet=new int[5];
+//        Arrays.fill(colorPallet, -1);
+//        int colors=3;
+//        System.out.println(mColoringDecision(graph,colorPallet,colors,0));
     }
     public static List<List<String>> graphColoring(int[][] graph, String[] colors, String[] colorPallet, int i){
         List<List<String>> outerList=new ArrayList<>();
