@@ -1,4 +1,4 @@
-package DSA_with_kunal.TreeDataStructure;
+package DSA_with_kunal.Heaps;
 
 import java.util.ArrayList;
 import java.util.List;
