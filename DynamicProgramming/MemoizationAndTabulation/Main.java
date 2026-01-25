@@ -411,7 +411,7 @@ public class Main {
         }
         return table[target.length()];
     }
-     
+
 
     // 7. Count Construct Tabulation
     public static int countConstructTab(String target, String[] wordBank){
