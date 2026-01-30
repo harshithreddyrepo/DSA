@@ -460,4 +460,177 @@ public class Problems {
         return dp[target];
     }
 
+    // Q18.Maximum Length of Repeated Subarray
+    public int findLength(int[] nums1, int[] nums2) {
+
+        int[][] dp=new int[nums1.length+1][nums2.length+1];
+
+        // Initialization will be done by the default values
+
+        // Build the table
+        for(int i=1; i<=nums1.length; i++){
+            for(int j=1; j<=nums2.length; j++){
+                if(nums1[i-1]==nums2[j-1]){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+            }
+        }
+        int max=0;
+        for(int i=1; i<=nums1.length; i++){
+            for(int j=1; j<=nums2.length; j++){
+                max=Math.max(max, dp[i][j]);
+            }
+        }
+        return max;
+    }
+
+    // Q19.Shortest Common Supersequence
+    public String shortestCommonSupersequence(String str1, String str2) {
+        int[][] dp=new int[str1.length()+1][str2.length()+1];
+
+        // Initialization will be done by default values
+
+        // Build the table
+        for(int i=1; i<=str1.length(); i++){
+            for(int j=1; j<=str2.length(); j++){
+                char c1=str1.charAt(i-1);
+                char c2=str2.charAt(j-1);
+                if(c1==c2){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }else{
+                    dp[i][j]=Math.max(dp[i-1][j], dp[i][j-1]);
+                }
+            }
+        }
+
+        // Build the Shortest Common Supersequence using the table
+        StringBuilder result=new StringBuilder();
+        int m=str1.length();
+        int n=str2.length();
+        while(m>0 && n>0){
+            if(str1.charAt(m-1)==str2.charAt(n-1)){
+                result.insert(0,""+str1.charAt(m-1)); // Diagonal
+                m--;
+                n--;
+            }else if(dp[m-1][n]>=dp[m][n-1]){
+                result.insert(0,""+str1.charAt(m-1)); // Top
+                m--;
+            }else{
+                result.insert(0,""+str2.charAt(n-1)); // Left
+                n--;
+            }
+
+        }
+        while(m>0){
+            result.insert(0, str1.charAt(m-1));
+            m--;
+        }
+        while(n>0){
+            result.insert(0, str2.charAt(n-1));
+            n--;
+        }
+
+        return result.toString();
+    }
+
+    // Q20.Edit Distance
+    public int minDistance(String word1, String word2) {
+        int[][] dp=new int[word1.length()+1][word2.length()+1];
+
+        // Initialization
+        // i.0th row (word1="")
+        for(int c=0; c<=word2.length(); c++){
+            dp[0][c]=c;
+        }
+        // ii.0th column (word2="")
+        for(int r=0; r<=word1.length(); r++){
+            dp[r][0]=r;
+        }
+
+        // Build the table
+        for(int i=1; i<=word1.length(); i++){
+            for(int j=1; j<=word2.length(); j++){
+                if(word1.charAt(i-1)==word2.charAt(j-1)){
+                    dp[i][j]=dp[i-1][j-1];
+                }else{
+                    dp[i][j]=1+Math.min(dp[i-1][j], Math.min(dp[i][j-1], dp[i-1][j-1]));
+                }
+            }
+        }
+        return dp[word1.length()][word2.length()];
+    }
+
+    // Q21.Longest Palindromic Subsequence
+    public int longestPalindromeSubseq(String s) {
+        String revStr=new StringBuilder(s).reverse().toString();
+        return lcs(s, revStr);
+    }
+    private int lcs(String s1, String s2){
+        int[][] dp=new int[s1.length()+1][s2.length()+1];
+
+        // Initialization wi be done by default values
+
+        // Build the table
+        for(int i=1; i<=s1.length(); i++){
+            for(int j=1; j<=s2.length(); j++){
+                if(s1.charAt(i-1)==s2.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }else{
+                    dp[i][j]=Math.max(dp[i-1][j], dp[i][j-1]);
+                }
+            }
+        }
+        return dp[s1.length()][s2.length()];
+    }
+
+    // Q22.Minimum Insertion Steps to Make a String Palindrome
+    public int minInsertions(String s) {
+        String revStr=new StringBuilder(s).reverse().toString();
+        int palindromicLen=scs(s, revStr);
+        return palindromicLen-s.length();
+    }
+    private int scs(String s1, String s2){
+        int[][] dp=new int[s1.length()+1][s2.length()+1];
+
+        // Initialization will be done by default values
+
+        // Build the  table
+        for(int i=1; i<=s1.length(); i++){
+            for(int j=1; j<=s2.length(); j++){
+                if(s1.charAt(i-1)==s2.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }else{
+                    dp[i][j]=Math.max(dp[i-1][j], dp[i][j-1]);
+                }
+            }
+        }
+
+        return s1.length()+s2.length()-dp[s1.length()][s2.length()];
+    }
+
+
+    // Q23.Matrix Chain Multiplication
+    static int matrixMultiplication(int arr[]) {
+        // code here
+        int n=arr.length;
+        int[][] dp=new int[n][n];
+        int matCnt=n-1;
+
+        // Initialization will be done by default values
+        for(int len=1; len<matCnt; len++){
+            for(int i=1; i<=matCnt-len; i++){
+                int j=i+len;
+                int min=Integer.MAX_VALUE;
+
+                for(int k=i; k<j; k++){
+                    int temp=dp[i][k]+dp[k+1][j]+arr[i-1]*arr[k]*arr[j];
+                    min=Math.min(min, temp);
+                }
+                dp[i][j]=min;
+            }
+        }
+        return dp[1][matCnt];
+    }
+
+
 }
