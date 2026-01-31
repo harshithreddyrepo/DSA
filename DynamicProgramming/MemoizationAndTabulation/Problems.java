@@ -1,5 +1,6 @@
 package DSA_with_kunal.DynamicProgramming.MemoizationAndTabulation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Problems {
@@ -632,5 +633,37 @@ public class Problems {
         return dp[1][matCnt];
     }
 
+    // Q24.Palindrome Partitioning
+    // Method 1: Recursion+Backtracking
+    public List<List<String>> partition(String s) {
+        List<List<String>> result = new ArrayList<>();
+        backtrack(s, 0, new ArrayList<>(), result);
+        return result;
+    }
+
+    private void backtrack(String s, int start, List<String> curList, List<List<String>> result) {
+
+        if (start == s.length()) {
+            result.add(new ArrayList<>(curList));
+            return;
+        }
+
+        for (int end = start + 1; end <= s.length(); end++) {
+            String substring = s.substring(start, end);
+            if (isPalindrome(substring)) {
+                curList.add(substring);
+                backtrack(s, end, curList, result);
+                curList.remove(curList.size() - 1);
+            }
+        }
+    }
+
+    private boolean isPalindrome(String substr) {
+        for (int i = 0, j = substr.length() - 1; i < j; i++, j--) {
+            if (substr.charAt(i) != substr.charAt(j))
+                return false;
+        }
+        return true;
+    }
 
 }
