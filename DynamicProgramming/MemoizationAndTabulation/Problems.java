@@ -666,4 +666,105 @@ public class Problems {
         return true;
     }
 
+    // Q25.Palindrome Partitioning II
+    // Method 1:- Time Complexity: O(n^4)
+    public int minCut1(String s) {
+        int[][] dp=new int[s.length()+1][s.length()+1];
+
+        // Initialization will be done by default values
+
+        // Build the table
+        for(int len=1; len<s.length(); len++){
+            for(int i=1; i<=s.length()-len; i++){
+                int j=i+len;
+                if(isPalindrome(s,i,j)){
+                    dp[i][j]=0;
+                }else{
+                    int min=Integer.MAX_VALUE;
+                    for(int k=i; k<j; k++){
+                        int temp=dp[i][k]+dp[k+1][j]+1;
+                        min=Math.min(min, temp);
+                    }
+                    dp[i][j]=min;
+                }
+            }
+        }
+        return dp[1][s.length()];
+    }
+
+    private boolean isPalindrome(String s, int start, int end) {
+        for (int i = start - 1, j = end - 1; i < j; i++, j--) {
+            if (s.charAt(i) != s.charAt(j))
+                return false;
+        }
+        return true;
+    }
+
+    // Method 2:- Time Complexity: O(n^3)
+    public int minCut2(String s) {
+        int[][] dp=new int[s.length()+1][s.length()+1];
+
+        // Initialization will be done by default values
+
+        // Precompute all palindrome substrings
+        boolean[][] isPal=new boolean[s.length()][s.length()];
+        for(int len=1; len<=s.length(); len++){
+            for(int i=0; i<=s.length()-len; i++){
+                int j=i+len-1;
+                if(s.charAt(i)==s.charAt(j)){
+                    isPal[i][j]=(len<=2) || isPal[i+1][j-1];
+                }
+            }
+        }
+        // Build the table
+        for(int len=1; len<s.length(); len++){
+            for(int i=1; i<=s.length()-len; i++){
+                int j=i+len;
+                if(isPal[i-1][j-1]){
+                    dp[i][j]=0;
+                }else{
+                    int min=Integer.MAX_VALUE;
+                    for(int k=i; k<j; k++){
+                        int temp=dp[i][k]+dp[k+1][j]+1;
+                        min=Math.min(min, temp);
+                    }
+                    dp[i][j]=min;
+                }
+            }
+        }
+        return dp[1][s.length()];
+    }
+
+    // Method 3:- Time Complexity: O(n^2)
+    public int minCut(String s) {
+        int n=s.length();
+        if(n<=1) return 0;
+        // Step 1: Precompute all palindrome substrings
+        boolean[][] isPal=new boolean[s.length()][s.length()];
+        for(int len=1; len<=s.length(); len++){
+            for(int i=0; i<=s.length()-len; i++){
+                int j=i+len-1;
+                if(s.charAt(i)==s.charAt(j)){
+                    isPal[i][j]=(len<=2) || isPal[i+1][j-1];
+                }
+            }
+        }
+
+        // Step 2: 1D DP for minimum costs
+        int[] dp=new int[n];
+        for(int i=0; i<n; i++){
+            if(isPal[0][i]){
+                dp[i]=0; // No cuts needed if fthe whole prefix is a palimdrome.
+            }else{
+                int min=i; // Maximum possible cuts: one for each character
+                for(int j=0; j<i; j++){
+                    if(isPal[j+1][i]){
+                        min=Math.min(min, dp[j]+1);
+                    }
+                }
+                dp[i]=min;
+            }
+        }
+        return dp[n-1];
+    }
 }
