@@ -859,4 +859,34 @@ public class Problems {
         }
         return dp[0][m+1];
     }
+
+    // Q27.Burst Balloons
+    public int maxCoins(int[] nums) {
+        int m=nums.length;
+        int[] newNums=new int[m+2];
+        for(int i=0; i<m; i++) newNums[i+1]=nums[i];
+        newNums[0]=1;
+        newNums[m+1]=1;
+
+        int[][] dp=new int[m+2][m+2];
+
+        //Initialization will be done by default values
+
+        // Build the table
+
+        for(int len=2; len<=m+1; len++){
+            for(int i=0; i<=m+1-len; i++){
+                int j=i+len;
+                int max=0;
+                for(int k=i+1; k<j; k++){
+                    int cur=dp[i][k]+dp[k][j]+(newNums[i]*newNums[k]*newNums[j]);
+                    max=Math.max(max, cur);
+                }
+                dp[i][j]=max;
+            }
+        }
+
+        return dp[0][m+1];
+    }
+
 }
