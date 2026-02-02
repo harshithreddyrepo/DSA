@@ -1,6 +1,7 @@
 package DSA_with_kunal.DynamicProgramming.MemoizationAndTabulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Problems {
@@ -634,8 +635,8 @@ public class Problems {
     }
 
     // Q24.Palindrome Partitioning
-    // Method 1: Recursion+Backtracking
-    public List<List<String>> partition(String s) {
+    // Method 1: Palindrome Recursion
+    public List<List<String>> partition1(String s) {
         List<List<String>> result = new ArrayList<>();
         backtrack(s, 0, new ArrayList<>(), result);
         return result;
@@ -664,6 +665,41 @@ public class Problems {
                 return false;
         }
         return true;
+    }
+
+    // Method 2: Palindrome DP
+    public List<List<String>> partition2(String s) {
+        int n=s.length();
+        boolean[][] isPal=new boolean[n][n];
+        // Precompute all palindrome substrings
+        for(int len=1; len<=n; len++){
+            for(int i=0; i<=n-len; i++){
+                int j=i+len-1;
+                if(s.charAt(i)==s.charAt(j)){
+                    isPal[i][j]=(len<=2)||isPal[i+1][j-1];
+                }
+            }
+        }
+        List<List<String>> result = new ArrayList<>();
+        backtrack(s, 0, new ArrayList<>(), result, isPal);
+        return result;
+    }
+
+    private void backtrack(String s, int start, List<String> curList, List<List<String>> result, boolean[][] isPal) {
+
+        if (start == s.length()) {
+            result.add(new ArrayList<>(curList));
+            return;
+        }
+
+        for (int end = start + 1; end <= s.length(); end++) {
+            String substring = s.substring(start, end);
+            if (isPal[start][end-1]) {
+                curList.add(substring);
+                backtrack(s, end, curList, result, isPal);
+                curList.remove(curList.size() - 1);
+            }
+        }
     }
 
     // Q25.Palindrome Partitioning II
@@ -766,5 +802,61 @@ public class Problems {
             }
         }
         return dp[n-1];
+    }
+
+    // Q26.Minimum Cost to Cut a Stick
+    // Method 1: Dp based on length of stick (TLE)
+    public int minCost1(int n, int[] cuts) {
+        boolean[] isValid=new boolean[n+1];
+        // Build the validCuts
+        for(int i=0; i<cuts.length; i++){
+            isValid[cuts[i]]=true;
+        }
+
+        int[][] dp=new int[n+1][n+1];
+        for(int len=2; len<=n; len++){
+            for(int i=0; i<=n-len; i++){
+                int j=i+len;
+                int min=Integer.MAX_VALUE;
+                for(int k=i+1; k<j; k++){
+                    if(isValid[k]){
+                        int temp=dp[i][k]+dp[k][j]+(j-i);
+                        min=Math.min(min, temp);
+                    }
+                }
+                dp[i][j]=(min==Integer.MAX_VALUE?0:min);
+            }
+        }
+        return dp[0][n];
+    }
+
+    // Method 2: DP based on number of cuts
+    public int minCost2(int n, int[] cuts) {
+        // 1.Prepare the cut points: add 0 & 1 the sort
+        int m=cuts.length;
+        int[] newCuts=new int[m+2];
+        for(int i=0; i<m; i++) newCuts[i+1]=cuts[i];
+        newCuts[0]=0;
+        newCuts[m+1]=n;
+        Arrays.sort(newCuts);
+
+        // 2.DP tabel based on index of cuts, not stick length
+        int[][] dp=new int[m+2][m+2];
+
+        // 3.len is the number of cut points in our current range
+        for(int len=2; len<m+2; len++){
+            for(int i=0; i<m+2-len; i++){
+                int j=i+len;
+                int min=Integer.MAX_VALUE;
+                // Try every cut point between i and j
+                for(int k=i+1; k<j; k++){
+                    min=Math.min(min, dp[i][k]+dp[k][j]);
+                }
+                // cost=(min sub-problems)+(length of the current stick segment)
+                // If no cuts found (min stays MAX), cost is 0
+                dp[i][j]=(min==Integer.MAX_VALUE?0:min)+(newCuts[j]-newCuts[i]);
+            }
+        }
+        return dp[0][m+1];
     }
 }
