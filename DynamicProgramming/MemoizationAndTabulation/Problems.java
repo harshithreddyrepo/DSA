@@ -889,4 +889,126 @@ public class Problems {
         return dp[0][m+1];
     }
 
+    // Q28.Boolean Parenthesization
+    // Method 1: Recursive
+    static int countWaysRec(String s) {
+        return helper(s, 0, s.length()-1, true);
+    }
+
+    static int helper(String s, int start, int end, boolean  isTrue){
+        if(start==end){
+            if(isTrue){
+                if(s.charAt(start)=='T'){
+                    return  1;
+                }
+                return 0;
+            }else{
+                if(s.charAt(start)=='F'){
+                    return 1;
+                }
+                return 0;
+            }
+        }
+
+        int result=0;
+        for(int k=start+1; k<end; k=k+2){
+            int temp=0;
+            char op=s.charAt(k);
+
+            if(op=='&'){
+                if(isTrue){
+                    temp= helper(s, start, k-1, true)*helper(s, k+1, end, true);
+                }else{
+                    temp= helper(s, start, k-1, true)*helper(s, k+1, end, false)
+                            + helper(s, start, k-1, false)*helper(s, k+1, end, true)
+                            + helper(s, start, k-1, false)*helper(s, k+1, end, false);
+                }
+            }else if(op=='|'){
+                if(isTrue){
+                    temp= helper(s, start, k-1, true)*helper(s, k+1, end, false)
+                            + helper(s, start, k-1, false)*helper(s, k+1, end, true)
+                            + helper(s, start, k-1, true)*helper(s, k+1, end, true);
+                }else{
+                    temp=helper(s, start, k-1, false)*helper(s, k+1, end, false);
+                }
+            }else{
+                if(isTrue){
+                    temp=helper(s, start, k-1, true)*helper(s, k+1, end, false)
+                            + helper(s, start, k-1, false)*helper(s, k+1, end, true);
+                }else{
+                    temp=helper(s, start, k-1, true)*helper(s, k+1, end, true)
+                            + helper(s, start, k-1, false)*helper(s, k+1, end, false);
+                }
+            }
+            result+=temp;
+        }
+        return result;
+    }
+
+    // Method 2: Dp
+    static int countWaysDp(String s) {
+
+        int slen=s.length();
+        int n=(slen+1)/2;
+        int m=n-1;
+
+        if(slen==1){
+            if(s.charAt(0)=='T'){
+                return 1;
+            }
+            return 0;
+        }
+
+        int[][] trueDp=new int[n][n];
+        int[][] falseDp=new int[n][n];
+
+        // Initialization
+        for(int i=0; i<n; i++){
+            char ch=s.charAt(2*i);
+            if(ch=='T'){
+                trueDp[i][i]=1;
+            }else{
+                falseDp[i][i]=1;
+            }
+        }
+
+        // Build the table
+        for(int len=1; len<=m; len++){
+            for(int i=0; i<=m-len; i++){
+                int j=i+len;
+                int start=2*i;
+                int end=2*j;
+                for(int k=start+1; k<end; k=k+2){
+
+                    char op=s.charAt(k);
+
+                    int lTrue=trueDp[i][(k-1)/2];
+                    int rTrue=trueDp[(k+1)/2][j];
+
+                    int lFalse=falseDp[i][(k-1)/2];
+                    int rFalse=falseDp[(k+1)/2][j];
+
+                    int tempTrue=0;
+                    int tempFalse=0;
+
+                    if(op=='&'){
+                        tempTrue=lTrue*rTrue;
+                        tempFalse=lTrue*rFalse + lFalse*rTrue + lFalse*rFalse;
+                    }else if(op=='|'){
+                        tempTrue=lTrue*rTrue + lTrue*rFalse + lFalse*rTrue;
+                        tempFalse=lFalse*rFalse;
+                    }else{
+                        tempTrue=lTrue*rFalse + lFalse*rTrue;
+                        tempFalse=lTrue*rTrue + lFalse*rFalse;
+                    }
+
+                    trueDp[i][j]+=tempTrue;
+                    falseDp[i][j]+=tempFalse;
+                }
+            }
+        }
+
+        return trueDp[0][m];
+    }
+
 }
