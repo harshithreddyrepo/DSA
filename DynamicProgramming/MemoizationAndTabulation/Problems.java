@@ -1,8 +1,6 @@
 package DSA_with_kunal.DynamicProgramming.MemoizationAndTabulation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Problems {
 
@@ -1009,6 +1007,91 @@ public class Problems {
         }
 
         return trueDp[0][m];
+    }
+
+    // Q29. Scramble String
+    // Method 1: Recursive (complex)
+    public boolean isScramble1(String s1, String s2) {
+        return helper1(s1, s2, 0, s1.length()-1, 0, s2.length()-1);
+    }
+
+    private boolean helper1(String s1, String s2, int s1Start, int s1End, int s2Start, int s2End){
+        if(s1Start==s1End){
+            if(s1.charAt(s1Start)==s2.charAt(s2Start)){
+                return true;
+            }
+            return false;
+        }
+
+        if(s1.substring(s1Start, s1End+1).equals(s2.substring(s2Start, s2End+1))) return true;
+
+        for(int k=s1Start; k<s1End; k++){
+            boolean swapCheck=(
+                    helper1(s1, s2, s1Start, k, s2End-(k-s1Start), s2End) &&
+                    helper1(s1, s2, k+1, s1End, s2Start, s2End-(k-s1Start)-1)
+            );
+
+            boolean noSwapCheck=(
+                    helper1(s1, s2, s1Start, k, s2Start, s2Start+(k-s1Start)) &&
+                    helper1(s1, s2, k+1, s1End, s2Start+(k-s1Start)+1, s2End)
+            );
+
+            if(swapCheck || noSwapCheck) return true;
+        }
+        return false;
+    }
+
+    // Method 2: Recursive (simple)
+    public boolean isScramble2(String s1, String s2) {
+        if (s1.equals(s2)) {
+            return true;
+        }
+        if (s1.length() == 1) {
+            return false;
+        }
+        for (int k = 0; k < s1.length() - 1; k++) {
+            boolean noSwapCheck = (
+                    isScramble2( s1.substring(0, k + 1), s2.substring(0, k + 1) ) &&
+                            isScramble2( s1.substring(k + 1), s2.substring(k + 1))
+            );
+
+            boolean swapCheck=(
+                    isScramble2(s1.substring(0, k+1), s2.substring(s2.length()-1-k)) &&
+                            isScramble2(s1.substring(k+1), s2.substring(0, s2.length()-1-k))
+            );
+
+            if(noSwapCheck || swapCheck) return true;
+        }
+        return false;
+    }
+
+    // Method 3 : Memoization
+    Map<String, Boolean> map=new HashMap<>();
+    public boolean isScramble3(String s1, String s2) {
+        if(map.containsKey(s1+","+s2)){
+            return map.get(s1+","+s2);
+        }
+        if (s1.equals(s2)) {
+            return true;
+        }
+        if (s1.length() == 1) {
+            return false;
+        }
+        for (int k = 0; k < s1.length() - 1; k++) {
+            boolean noSwapCheck = (
+                    isScramble3( s1.substring(0, k + 1), s2.substring(0, k + 1) ) &&
+                            isScramble3( s1.substring(k + 1, s1.length()), s2.substring(k + 1, s2.length()))
+            );
+
+            boolean swapCheck=(
+                    isScramble3(s1.substring(0, k+1), s2.substring(s2.length()-1-k, s2.length())) &&
+                            isScramble3(s1.substring(k+1, s1.length()), s2.substring(0, s2.length()-1-k))
+            );
+
+            if(noSwapCheck || swapCheck) return true;
+        }
+        map.put(s1+","+s2, false);
+        return map.get(s1+","+s2);
     }
 
 }
