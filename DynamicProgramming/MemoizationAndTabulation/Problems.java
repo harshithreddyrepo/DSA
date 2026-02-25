@@ -1094,4 +1094,86 @@ public class Problems {
         return map.get(s1+","+s2);
     }
 
+    // Q30. Super Egg Drop
+    // Method 1: Recursive (Brute)
+    public int superEggDropRec(int k, int n) {
+        if(n<=1 || k==1) return n;
+        int min=Integer.MAX_VALUE;
+        for(int f=1; f<=n; f++){
+            int curWorst=Math.max(superEggDropRec(k-1, f-1), superEggDropRec(k, n-f));
+            min=Math.min(min, curWorst+1);
+        }
+
+        return min;
+    }
+
+    // Method 2: Memoization (Brute)
+    Map<String, Integer> SEDmap=new HashMap<>();
+    public int superEggDropMemo(int k, int n) {
+        if(map.containsKey(k+"_"+n)) return SEDmap.get(k+"_"+n);
+        if(n<=1 || k==1) return n;
+        int min=Integer.MAX_VALUE;
+        for(int f=1; f<=n; f++){
+            int curWorst=Math.max(superEggDropMemo(k-1, f-1), superEggDropMemo(k, n-f));
+            min=Math.min(min, curWorst+1);
+        }
+        SEDmap.put(k+"_"+n, min);
+        return SEDmap.get(k+"_"+n);
+    }
+
+    // Method 3: Tabulation (Brute)
+    public int superEggDropTabu(int k, int n) {
+        int[][] dp = new int[n + 1][k + 1];
+
+        // Initialization
+        for (int c = 1; c <= k; c++) dp[1][c] = 1;
+        for (int r = 1; r <= n; r++) dp[r][1] = r;
+
+        // Build the table
+        for(int i=2; i<=n; i++){
+            for(int j=2; j<=k; j++){
+                int result=i;
+                for(int x=1; x<=i; x++){
+                    int cur=1+Math.max(dp[x-1][j-1], dp[i-x][j]);
+                    result=Math.min(result, cur);
+                }
+                dp[i][j]=result;
+            }
+        }
+        return dp[n][k];
+    }
+
+    // Method 4: Dp + Binary Search technique ( Optimized, T.C=O(K.N log N) )
+    public int superEggDrop(int k, int n) {
+        int[][] dp=new int[n+1][k+1];
+
+        // Initialization
+        for(int c=1; c<=k; c++) dp[1][c]=1;
+        for(int r=1; r<=n; r++) dp[r][1]=r;
+
+        // Build the table
+        for(int i=2; i<=n; i++){
+            for(int j=2; j<=k; j++){
+                int low=1;
+                int high=i;
+                int result=i;
+                while(low<=high){
+                    int mid=low+(high-low)/2;
+                    int broken=dp[mid-1][j-1];
+                    int notBroken=dp[i-mid][j];
+
+                    if(broken > notBroken){
+                        result=Math.min(result,broken+1);
+                        high=mid-1;
+                    }else{
+                        result=Math.min(result, notBroken+1);
+                        low=mid+1;
+                    }
+                }
+                dp[i][j]=result;
+            }
+        }
+        return dp[n][k];
+    }
+
 }
