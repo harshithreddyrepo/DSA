@@ -1,6 +1,7 @@
 package DSA_with_kunal.GraphDataStructureAndAlgorithms;
 
 import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class Problems {
@@ -145,5 +146,59 @@ public class Problems {
             }
         }
         return time;
+    }
+
+    // Q5.01 Matrix
+    public int[][] updateMatrix(int[][] mat) {
+        int m=mat.length;
+        int n=mat[0].length;
+        Queue<Cell> queue=new LinkedList<>();
+        boolean[][] visited=new boolean[m][n];
+
+        for(int i=0; i<mat.length; i++){
+            for(int j=0; j<mat[0].length; j++){
+                if(mat[i][j]==0){
+                    queue.offer(new Cell(i, j));
+                    visited[i][j]=true;
+                }
+            }
+        }
+
+        int minDist=1;
+
+        while(!queue.isEmpty()){
+            int size=queue.size();
+            for(int i=0; i<size; i++){
+                Cell cur=queue.poll();
+                int row=cur.row;
+                int col=cur.col;
+                //TOP
+                if(row>0  && !visited[row-1][col]){
+                    mat[row-1][col]=minDist;
+                    visited[row-1][col]=true;
+                    queue.offer(new Cell(row-1, col));
+                }
+                //RIGHT
+                if(col<n-1 && !visited[row][col+1]){
+                    mat[row][col+1]=minDist;
+                    visited[row][col+1]=true;
+                    queue.offer(new Cell(row, col+1));
+                }
+                //BOTTOM
+                if(row<m-1 && !visited[row+1][col]){
+                    mat[row+1][col]=minDist;
+                    visited[row+1][col]=true;
+                    queue.offer(new Cell(row+1, col));
+                }
+                //LEFT
+                if(col>0 && !visited[row][col-1]){
+                    mat[row][col-1]=minDist;
+                    visited[row][col-1]=true;
+                    queue.offer(new Cell(row, col-1));
+                }
+            }
+            minDist++;
+        }
+        return mat;
     }
 }
