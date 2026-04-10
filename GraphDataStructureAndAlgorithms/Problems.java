@@ -201,4 +201,72 @@ public class Problems {
         }
         return mat;
     }
+
+    // Q6.Surrounded Regions
+    public void solve(char[][] board) {
+        int m=board.length;
+        int n=board[0].length;
+        Queue<Cell> queue=new ArrayDeque<>();
+        for(int i=0; i<m; i++){
+            if(board[i][0]=='O'){
+                queue.offer(new Cell(i, 0));
+                board[i][0]='Y';
+            }
+            if(board[i][n-1]=='O'){
+                queue.offer(new Cell(i, n-1));
+                board[i][n-1]='Y';
+            }
+        }
+        for(int j=0; j<n; j++){
+            if(board[0][j]=='O'){
+                queue.offer(new Cell(0, j));
+                board[0][j]='Y';
+            }
+            if(board[m-1][j]=='O'){
+                queue.offer(new Cell(m-1, j));
+                board[m-1][j]='Y';
+            }
+        }
+
+        while(!queue.isEmpty()){
+            int size=queue.size();
+            for(int i=0; i<size; i++){
+                Cell cur=queue.poll();
+                int row=cur.row;
+                int col=cur.col;
+
+                // Top
+                if(row>0 && board[row-1][col]=='O'){
+                    queue.offer(new Cell(row-1, col));
+                    board[row-1][col]='Y';
+                }
+                // Right
+                if(col<n-1 && board[row][col+1]=='O'){
+                    queue.offer(new Cell(row, col+1));
+                    board[row][col+1]='Y';
+                }
+                // Down
+                if(row<m-1 && board[row+1][col]=='O'){
+                    queue.offer(new Cell(row+1, col));
+                    board[row+1][col]='Y';
+                }
+                // Left
+                if(col>0 && board[row][col-1]=='O'){
+                    queue.offer(new Cell(row, col-1));
+                    board[row][col-1]='Y';
+                }
+
+            }
+        }
+
+        for(int i=0; i<m; i++){
+            for(int j=0; j<n; j++){
+                if(board[i][j]=='Y'){
+                    board[i][j]='O';
+                }else{
+                    board[i][j]='X';
+                }
+            }
+        }
+    }
 }
