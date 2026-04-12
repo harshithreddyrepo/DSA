@@ -1,8 +1,6 @@
 package DSA_with_kunal.GraphDataStructureAndAlgorithms;
 
-import java.util.ArrayDeque;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Problems {
     // Q1.Number of Provinces
@@ -268,5 +266,83 @@ public class Problems {
                 }
             }
         }
+    }
+
+    // Q7.Is Graph Bipartite
+    public boolean isBipartite(int[][] graph) {
+        int n = graph.length;
+        int[] visited = new int[n];
+        boolean result = true;
+        for (int i = 0; i < n; i++) {
+            visited[i] = -1;
+        }
+
+        for (int i = 0; i < n; i++) {
+            if (visited[i] == -1) {
+                result = result && dfs(i, 0, visited, graph);
+            }
+        }
+        return result;
+    }
+
+    private boolean dfs(int node, int color, int[] visited, int[][] graph) {
+        visited[node] = color;
+        for (int i = 0; i < graph[node].length; i++) {
+            // Adjacent un-visited node
+            if (visited[graph[node][i]] == -1) {
+                int newColor = color == 1 ? 0 : 1;
+                boolean val = dfs(graph[node][i], newColor, visited, graph);
+                if (!val)
+                    return false;
+            } else if (visited[graph[node][i]] == color) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Q8.Eventual Safe Node
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        int n=graph.length;
+        int[] visited=new int[n];
+        int[] pathVisited=new int[n];
+        int[] safeNode=new int[n];
+        List<Integer> result=new ArrayList<>();
+
+        for(int i=0; i<n; i++){
+            if(visited[i]==0){
+                dfs(i, visited, pathVisited, safeNode, graph);
+            }
+        }
+
+        for(int i=0; i<n; i++){
+            if(safeNode[i]==1){
+                result.add(i);
+            }
+        }
+
+        return result;
+    }
+
+    private boolean dfs(int node, int[] visited, int[] pathVisited, int[] safeNode, int[][] graph){
+        visited[node]=1;
+        pathVisited[node]=1;
+
+        for(int i=0; i<graph[node].length; i++){
+            // Visited and Path Visited => Cycle Detected
+            if(visited[graph[node][i]]==1 && pathVisited[graph[node][i]]==1){
+                return true;
+            }else if(visited[graph[node][i]]==0){
+                // Un-visited node
+                if(dfs(graph[node][i], visited, pathVisited, safeNode, graph)){
+                    return true;
+                }
+            }
+        }
+
+
+        pathVisited[node]=0;
+        safeNode[node]=1;
+        return false;
     }
 }
