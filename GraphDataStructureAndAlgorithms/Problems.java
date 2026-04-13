@@ -345,4 +345,82 @@ public class Problems {
         safeNode[node]=1;
         return false;
     }
+
+    // Q9.Course Schedule
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        List<List<Integer>> adjList=new ArrayList<>();
+        for(int i=0; i<numCourses; i++){
+            adjList.add(new ArrayList<Integer>());
+        }
+        for(int i=0; i<prerequisites.length; i++){
+            adjList.get(prerequisites[i][1]).add(prerequisites[i][0]);
+        }
+
+        // Cycle Detection in Directed Graph (DFS)
+        boolean[] visited=new boolean[numCourses];
+        boolean[] pathVisited=new boolean[numCourses];
+        for(int i=0; i<numCourses; i++){
+            if(!visited[i]){
+                // Cycle Detected => Return false
+                if(dfs(i, visited, pathVisited, adjList)){
+                    return false;
+                }
+            }
+        }
+        // DAG => Return flase
+        return true;
+    }
+
+    private boolean dfs(int node, boolean[] visited, boolean[] pathVisited, List<List<Integer>> adjList){
+        visited[node]=true;
+        pathVisited[node]=true;
+        for(int adj : adjList.get(node)){
+            if(visited[adj] && pathVisited[adj]) return true;
+            if(!visited[adj]){
+                if(dfs(adj, visited, pathVisited, adjList)) return true;
+            }
+        }
+        pathVisited[node]=false;
+        return false;
+    }
+
+    // Q10.Course Schedule II
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        List<List<Integer>> adjList=new ArrayList<>();
+        for(int i=0; i<numCourses; i++){
+            adjList.add(new ArrayList<Integer>());
+        }
+        for(int i=0; i<prerequisites.length; i++){
+            adjList.get(prerequisites[i][1]).add(prerequisites[i][0]);
+        }
+
+        // Topological Sort (BFS)
+        int[] inDegree=new int[numCourses];
+        for(int i=0; i<prerequisites.length; i++){
+            inDegree[prerequisites[i][0]]++;
+        }
+        Queue<Integer> queue=new ArrayDeque<>();
+        for(int i=0; i<numCourses; i++){
+            if(inDegree[i]==0) queue.offer(i);
+        }
+        List<Integer> list=new ArrayList<>();
+
+        while(!queue.isEmpty()){
+            int node=queue.poll();
+            list.add(node);
+            for(int adj:adjList.get(node)){
+                inDegree[adj]--;
+                if(inDegree[adj]==0) queue.offer(adj);
+            }
+        }
+
+        if(list.size()<numCourses) return new int[]{};
+
+        int[] result=new int[numCourses];
+        for(int i=0; i<numCourses; i++){
+            result[i]=list.get(i);
+        }
+
+        return result;
+    }
 }
