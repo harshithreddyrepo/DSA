@@ -423,4 +423,78 @@ public class Problems {
 
         return result;
     }
+
+    // Q11.Alien Dictionary
+    public String findOrder(String[] words) {
+
+        List<Character[]> edgeList = new ArrayList<>();
+
+        Map<Character, List<Character>> adjList=new HashMap<>();
+
+        Map<Character, Integer> inDegree=new HashMap<>();
+
+        Set<Character> set=new HashSet<>();
+
+        for (String word : words) {
+            for (char c : word.toCharArray()) {
+                set.add(c);
+                inDegree.put(c, 0);
+            }
+        }
+
+
+        for(int i=0; i<words.length-1; i++){
+            int len=Math.min(words[i].length(), words[i+1].length());
+            int j=0;
+            while(j<len && words[i].charAt(j)==words[i+1].charAt(j)){
+                j++;
+            }
+
+            if (j == len && words[i].length() > words[i+1].length()) {
+                return "";
+            }
+
+            if(j<len) edgeList.add(new Character[]{words[i].charAt(j),words[i+1].charAt(j)});
+        }
+
+        for(Character[] edge:edgeList){
+            char u=edge[0];
+            char v=edge[1];
+
+            // Adj List
+            if(adjList.containsKey(u)){
+                adjList.get(u).add(v);
+            }else{
+                adjList.put(u, new ArrayList<>());
+                adjList.get(u).add(v);
+            }
+
+            // In-Degree
+            inDegree.put(v, inDegree.get(v) + 1);
+        }
+
+        StringBuilder result=new StringBuilder("");
+        Queue<Character> queue=new ArrayDeque<>();
+        for(Character key : inDegree.keySet()){
+            if(inDegree.get(key)==0){
+                queue.offer(key);
+            }
+        }
+
+        while(!queue.isEmpty()){
+            char ch=queue.poll();
+            result.append(ch);
+            List<Character> adjs=adjList.getOrDefault(ch, new ArrayList<>());
+            for(char adj:adjs){
+                inDegree.put(adj, inDegree.get(adj)-1);
+                if(inDegree.get(adj)==0) queue.offer(adj);
+            }
+        }
+
+        if(result.length()==set.size()){
+            return result.toString();
+        }else{
+            return "";
+        }
+    }
 }
