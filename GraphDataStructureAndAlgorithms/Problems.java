@@ -497,4 +497,43 @@ public class Problems {
             return "";
         }
     }
+
+    // Q12.Word Ladder
+    class Pair{
+        String word;
+        int dist;
+        public Pair(String word, int dist){
+            this.word=word;
+            this.dist=dist;
+        }
+    }
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> set = new HashSet<>(wordList);
+        int len=1;
+        if(!set.contains(endWord)) return 0;
+        if(beginWord==endWord) return 1;
+
+        Queue<Pair> queue=new ArrayDeque<>();
+        queue.offer(new Pair(beginWord,1));
+        set.remove(beginWord);
+        while(!queue.isEmpty()){
+            int size=queue.size();
+            for(int i=0; i<size; i++){
+                Pair cur=queue.poll();
+                String word=cur.word;
+                if(word.equals(endWord)) return cur.dist;
+                for(int j=0; j<word.length(); j++){
+                    for(int k=0; k<26; k++){
+                        String adjWord = word.substring(0,j) + (char)('a'+k) + word.substring(j+1);
+                        if(set.contains(adjWord)){
+                            queue.offer(new Pair(adjWord, len+1));
+                            set.remove(adjWord);
+                        }
+                    }
+                }
+            }
+            len++;
+        }
+        return 0;
+    }
 }
