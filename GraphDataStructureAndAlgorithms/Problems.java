@@ -536,4 +536,115 @@ public class Problems {
         }
         return 0;
     }
+
+    // Dijkstra Algorithm
+    class  Pair2{
+        int node;
+        int dist;
+        public Pair2(int node, int dist){
+            this.node=node;
+            this.dist=dist;
+        }
+    }
+    public int[] dijkstra(int V, int[][] edges, int src) {
+        Map<Integer, List<Pair2>> adjList = new HashMap<>();
+        for (int[] edge : edges) {
+            // [u, v, distance]
+            adjList.computeIfAbsent(edge[0], k -> new ArrayList<>())
+                    .add(new Pair2(edge[1], edge[2]));
+
+            adjList.computeIfAbsent(edge[1], k -> new ArrayList<>())
+                    .add(new Pair2(edge[0], edge[2]));
+        }
+
+        PriorityQueue<Pair2> minHeap=new PriorityQueue<>((a, b)-> {
+            if(a.dist!=b.dist){
+                return a.dist-b.dist;
+            }else{
+                return a.node-b.node;
+            }
+        });
+
+        int[] result=new int[V];
+        Arrays.fill(result, Integer.MAX_VALUE);
+
+        result[src]=0;
+        minHeap.offer(new Pair2(src, 0));
+
+        while(!minHeap.isEmpty()){
+            Pair2 cur=minHeap.poll();
+            List<Pair2> adjNodes=adjList.get(cur.node);
+            for(Pair2 adj:adjNodes){
+                if(result[adj.node]>cur.dist+adj.dist){
+                    result[adj.node]=cur.dist+adj.dist;
+                    minHeap.offer(new Pair2(adj.node, result[adj.node]));
+                }
+            }
+        }
+        return result;
+    }
+
+    // Q13.Shortest Path in an Undirected Graph
+    public List<Integer> shortestPath(int n, int m, int edges[][]) {
+
+        int[] distance=new int[n+1];
+
+        int[] parent=new int[n+1];
+
+        for(int i=0; i<=n; i++){
+            parent[i]=i;
+        }
+
+        Map<Integer, List<int[]>> adjList=new HashMap<>();
+
+        for(int edge[] : edges){
+
+            adjList.computeIfAbsent(edge[0],  k -> new ArrayList<>())
+                    .add(new int[]{edge[2], edge[1]}); // {distance ,node}
+
+            adjList.computeIfAbsent(edge[1],  k -> new ArrayList<>())
+                    .add(new int[]{edge[2], edge[0]}); // {distance ,node}
+        }
+
+        Arrays.fill(distance, Integer.MAX_VALUE);
+
+        distance[1]=0;
+
+        PriorityQueue<int[]> minHeap=new PriorityQueue<>((a, b)->{
+            if(a[0]!=b[0]){
+                return a[0]-b[0];
+            }else{
+                return a[1]-b[1];
+            }
+        });
+
+        minHeap.offer(new int[]{0, 1});
+
+        while(!minHeap.isEmpty()){
+            int[] node=minHeap.poll();
+            List<int[]> adjNodes = adjList.getOrDefault(node[1], new ArrayList<>());
+            for(int[] adj:adjNodes){
+                if(distance[adj[1]]>node[0]+adj[0]){
+                    distance[adj[1]]=node[0]+adj[0];
+                    parent[adj[1]]=node[1];
+                    minHeap.offer(new int[]{distance[adj[1]], adj[1]});
+                }
+            }
+        }
+
+        List<Integer> result=new ArrayList<>();
+
+        if(distance[n]==Integer.MAX_VALUE){
+            result.add(-1);
+        }else{
+            result.add(n);
+            int node=n;
+            while(node!=parent[node]){
+                node=parent[node];
+                result.add(0, node);
+            }
+            result.add(0, distance[n]);
+        }
+        return result;
+    }
 }
