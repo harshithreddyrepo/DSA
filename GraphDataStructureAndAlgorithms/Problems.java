@@ -499,10 +499,10 @@ public class Problems {
     }
 
     // Q12.Word Ladder
-    class Pair{
+    class WordPair{
         String word;
         int dist;
-        public Pair(String word, int dist){
+        public WordPair(String word, int dist){
             this.word=word;
             this.dist=dist;
         }
@@ -513,20 +513,20 @@ public class Problems {
         if(!set.contains(endWord)) return 0;
         if(beginWord==endWord) return 1;
 
-        Queue<Pair> queue=new ArrayDeque<>();
-        queue.offer(new Pair(beginWord,1));
+        Queue<WordPair> queue=new ArrayDeque<>();
+        queue.offer(new WordPair(beginWord,1));
         set.remove(beginWord);
         while(!queue.isEmpty()){
             int size=queue.size();
             for(int i=0; i<size; i++){
-                Pair cur=queue.poll();
+                WordPair cur=queue.poll();
                 String word=cur.word;
                 if(word.equals(endWord)) return cur.dist;
                 for(int j=0; j<word.length(); j++){
                     for(int k=0; k<26; k++){
                         String adjWord = word.substring(0,j) + (char)('a'+k) + word.substring(j+1);
                         if(set.contains(adjWord)){
-                            queue.offer(new Pair(adjWord, len+1));
+                            queue.offer(new WordPair(adjWord, len+1));
                             set.remove(adjWord);
                         }
                     }
@@ -585,7 +585,8 @@ public class Problems {
     }
 
     // Q13.Shortest Path in an Undirected Graph
-    public List<Integer> shortestPath(int n, int m, int edges[][]) {
+    // Method 1: PriorityQueue
+    public List<Integer> shortestPathPriorityQueue(int n, int m, int edges[][]) {
 
         int[] distance=new int[n+1];
 
@@ -646,5 +647,147 @@ public class Problems {
             result.add(0, distance[n]);
         }
         return result;
+    }
+
+    // Method 2: Set (TreeSet)
+    class Pair{
+
+        int node;
+        int dist;
+
+        public Pair(int node, int dist){
+            this.node=node;
+            this.dist=dist;
+        }
+
+        int getNode(){
+            return node;
+        }
+
+        int getDist(){
+            return dist;
+        }
+    }
+    public List<Integer> shortestPath(int n, int m, int edges[][]) {
+
+        List<List<Pair>> adjList=new ArrayList<>();
+
+        for(int i=0; i<=n; i++){
+            adjList.add(new ArrayList<Pair>());
+        }
+
+        for(int[] edge : edges){
+            int u=edge[0];
+            int v=edge[1];
+            int w=edge[2];
+            adjList.get(u).add(new Pair(v, w));
+            adjList.get(v).add(new Pair(u, w));
+        }
+
+        int[] distance=new int[n+1];
+        Arrays.fill(distance, Integer.MAX_VALUE);
+        distance[1]=0;
+
+        int[] parent=new int[n+1];
+        parent[1]=-1;
+
+        TreeSet<Pair> set=new TreeSet<>((a, b)->{
+            if(a.getDist()!=b.getDist()){
+                return a.getDist()-b.getDist();
+            }else{
+                return a.getNode()-b.getNode();
+            }
+        });
+
+        set.add(new Pair(1, 0));
+
+        while(!set.isEmpty()){
+
+            Pair cur=set.pollFirst();
+            int node=cur.getNode();
+            int dist=cur.getDist();
+            // set.remove(cur);
+
+            for(Pair adj : adjList.get(node)){
+
+                int adjNode=adj.getNode();
+
+                int wght=adj.getDist();
+
+                if(distance[adjNode]>dist+wght){
+
+                    if(distance[adjNode]!=Integer.MAX_VALUE){
+                        set.remove(new Pair(adjNode, distance[adjNode]));
+                    }
+
+                    parent[adjNode]=node;
+                    distance[adjNode]=dist+wght;
+                    set.add(new Pair(adjNode, dist+wght));
+                }
+            }
+        }
+
+        List<Integer> result=new ArrayList<>();
+
+        if(distance[n]==Integer.MAX_VALUE){
+            result.add(-1);
+            return result;
+        }
+
+        int vertex=n;
+        result.add(n);
+        while(parent[vertex]!=-1){
+            result.add(0, parent[vertex]);
+            vertex=parent[vertex];
+        }
+
+        result.add(0, distance[n]);
+
+        return result;
+
+    }
+
+    // Q14.Shortest Path in Undirected Graph with Unit Weights
+    public int[] shortestPath(int V, int[][] edges, int src) {
+
+        List<List<Integer>> adjList = new ArrayList<>();
+
+        for(int i=0; i<V; i++){
+            adjList.add(new ArrayList<Integer>());
+        }
+
+        for(int[] edge : edges){
+            int u=edge[0];
+            int v=edge[1];
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+
+        int[] distance=new int[V];
+
+        Arrays.fill(distance, -1);
+
+        distance[src]=0;
+
+        int dist=1;
+
+        Queue<Integer> queue = new ArrayDeque<>();
+
+        queue.offer(src);
+
+        while(!queue.isEmpty()){
+            int size=queue.size();
+            for(int i=0; i<size; i++){
+                int cur=queue.poll();
+                for(int adj:adjList.get(cur)){
+                    if(distance[adj]==-1 || distance[adj]>distance[cur]+1){
+                        distance[adj]=distance[cur]+1;
+                        queue.offer(adj);
+                    }
+                }
+            }
+        }
+
+        return distance;
     }
 }
