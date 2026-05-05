@@ -790,4 +790,155 @@ public class Problems {
 
         return distance;
     }
+
+    // Q15.Shortest Path in Binary Matrix
+    public int shortestPathBinaryMatrix(int[][] grid) {
+
+        int n=grid.length;
+
+        if(grid[0][0]==1 || grid[n-1][n-1]==1){
+            return -1;
+        }
+        grid[0][0]=1;
+
+        Queue<Cell> queue=new ArrayDeque<>();
+        queue.offer(new Cell(0, 0));
+
+        while(!queue.isEmpty()){
+            int size=queue.size();
+            for(int i=0; i<size; i++){
+                Cell cur=queue.poll();
+                int row=cur.getRow();
+                int col=cur.getCol();
+                int dist=grid[row][col];
+                // Check for adjacent cell containing '0'
+                // if present insert it into the queue and update the distance.
+
+                // North
+                if(row>0 && grid[row-1][col]==0){
+                    grid[row-1][col]=dist+1;
+                    queue.offer(new Cell(row-1, col));
+                }
+                // North-East
+                if((row>0 && col<n-1) && grid[row-1][col+1]==0){
+                    grid[row-1][col+1]=dist+1;
+                    queue.offer(new Cell(row-1, col+1));
+                }
+                // East
+                if(col<n-1 && grid[row][col+1]==0){
+                    grid[row][col+1]=dist+1;
+                    queue.offer(new Cell(row, col+1));
+                }
+                // South-East
+                if((row<n-1 && col<n-1) && grid[row+1][col+1]==0){
+                    grid[row+1][col+1]=dist+1;
+                    queue.offer(new Cell(row+1, col+1));
+                }
+                // South
+                if(row<n-1 && grid[row+1][col]==0){
+                    grid[row+1][col]=dist+1;
+                    queue.offer(new Cell(row+1, col));
+                }
+                // South-West
+                if((row<n-1 && col>0) && grid[row+1][col-1]==0){
+                    grid[row+1][col-1]=dist+1;
+                    queue.offer(new Cell(row+1, col-1));
+                }
+                // West
+                if(col>0 && grid[row][col-1]==0){
+                    grid[row][col-1]=dist+1;
+                    queue.offer(new Cell(row, col-1));
+                }
+                // North-West
+                if((row>0 && col>0) && grid[row-1][col-1]==0){
+                    grid[row-1][col-1]=dist+1;
+                    queue.offer(new Cell(row-1, col-1));
+                }
+
+
+            }
+        }
+
+        if(grid[n-1][n-1]==0){
+            return -1;
+        }
+        return grid[n-1][n-1];
+
+    }
+
+    // Q16.Path with Minimum Effort
+    class AbsCell{
+        int row;
+        int col;
+        int absDiff;
+        public AbsCell(int row, int col, int absDiff){
+            this.row=row;
+            this.col=col;
+            this.absDiff=absDiff;
+        }
+        int getRow(){
+            return row;
+        }
+        int getCol(){
+            return col;
+        }
+        int getAbsDiff(){
+            return absDiff;
+        }
+    }
+    public int minimumEffortPath(int[][] heights) {
+
+        int rows=heights.length;
+        int columns=heights[0].length;
+
+        int[][] maxAbsDiff=new int[rows][columns];
+        //  Arrays.fill(maxAbsDiff, Integer.MAX_VALUE);
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<columns; j++){
+                maxAbsDiff[i][j]=Integer.MAX_VALUE;
+            }
+        }
+        maxAbsDiff[0][0]=0;
+
+        TreeSet<AbsCell> set = new TreeSet<>((a, b) -> {
+            if (a.absDiff != b.absDiff) return a.absDiff - b.absDiff;
+            if (a.row != b.row) return a.row - b.row;
+            return a.col - b.col;
+        });
+        set.add(new AbsCell(0, 0, 0));
+
+        int[] dltRow={-1, 0, 1, 0};
+        int[] dltCol={0, 1, 0, -1};
+
+        while(!set.isEmpty()){
+            AbsCell cur=set.pollFirst();
+            int row=cur.getRow();
+            int col=cur.getCol();
+            int absDiff=cur.getAbsDiff();
+
+            for(int i=0; i<4; i++){
+                int newRow=row+dltRow[i];
+                int newCol=col+dltCol[i];
+                if((newRow>=0 && newRow<rows) && (newCol>=0 && newCol<columns)){
+
+                    int curAbsDiff=Math.abs(heights[row][col]-heights[newRow][newCol]);
+                    int effortToReachNewCell=Math.max(absDiff, curAbsDiff);
+
+                    if(effortToReachNewCell<maxAbsDiff[newRow][newCol]){
+                        if(maxAbsDiff[newRow][newCol]!=Integer.MAX_VALUE){
+                            set.remove(new AbsCell(newRow, newCol, maxAbsDiff[newRow][newCol]));
+                        }
+                        maxAbsDiff[newRow][newCol]=Math.max(absDiff, curAbsDiff);
+                        set.add(new AbsCell(newRow, newCol, maxAbsDiff[newRow][newCol]));
+                    }
+                }
+            }
+
+        }
+
+        return maxAbsDiff[rows-1][columns-1];
+
+
+    }
+
 }
