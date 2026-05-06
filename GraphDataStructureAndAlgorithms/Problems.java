@@ -941,4 +941,157 @@ public class Problems {
 
     }
 
+    // Q17.Cheapest Flights within K Stops
+    class KstopPair{
+        int city;
+        int price;
+        int stop;
+        public KstopPair(int city, int price, int stop){
+            this.city=city;
+            this.price=price;
+            this.stop=stop;
+        }
+        int getCity(){
+            return city;
+        }
+        int getPrice(){
+            return price;
+        }
+        int getStop(){
+            return stop;
+        }
+    }
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        List<List<KstopPair>> adjList=new ArrayList<>();
+        for(int i=0; i<n; i++){
+            adjList.add(new ArrayList<KstopPair>());
+        }
+        for(int[] flight:flights){
+            adjList.get(flight[0]).add(new KstopPair(flight[1], flight[2], 0));
+        }
+
+        int[] cost=new int[n];
+        Arrays.fill(cost, Integer.MAX_VALUE);
+        cost[src]=0;
+
+        Queue<KstopPair> queue=new ArrayDeque<>();
+        queue.offer(new KstopPair(src, 0, -1));
+
+        while(!queue.isEmpty()){
+            KstopPair cur=queue.poll();
+            int curCity=cur.getCity();
+            int curCost=cur.getPrice();
+            int curStop=cur.getStop();
+            if(curStop<k){
+                for(KstopPair adj:adjList.get(curCity)){
+                    int adjCity=adj.getCity();
+                    int newCost=curCost+adj.getPrice();
+                    if(newCost<cost[adjCity]){
+                        cost[adjCity]=newCost;
+                        queue.offer(new KstopPair(adjCity, newCost, curStop+1));
+                    }
+                }
+            }
+        }
+        if(cost[dst]==Integer.MAX_VALUE){
+            return -1;
+        }
+        return cost[dst];
+    }
+
+    // Q18.Minimum Multiplications to Reach End
+    public int minSteps(int[] arr, int start, int end) {
+        // code here
+        int[] minOpn=new int[1000];
+        Arrays.fill(minOpn, Integer.MAX_VALUE);
+        minOpn[start]=0;
+
+        Queue<Integer> queue=new ArrayDeque<>();
+        queue.offer(start);
+
+        while(!queue.isEmpty()){
+            int cur=queue.poll();
+            for(int n:arr){
+                int adj= (cur*n)%1000;
+                if(minOpn[adj]>minOpn[cur]+1){
+                    minOpn[adj]=minOpn[cur]+1;
+                    queue.offer(adj);
+                }
+            }
+        }
+        if(minOpn[end]==Integer.MAX_VALUE){
+            return -1;
+        }
+        return minOpn[end];
+    }
+
+    // Q19.Number of Ways to Arrive at Destination
+    class Pair19{
+        int intersection;
+        long time;
+        public Pair19(int intersection, long time){
+            this.intersection=intersection;
+            this.time=time;
+        }
+        int getIntersection(){
+            return intersection;
+        }
+        long getTime(){
+            return time;
+        }
+    }
+    public int countPaths(int n, int[][] roads) {
+        final int M=1000000007;
+        List<List<Pair19>> adjList=new ArrayList<>();
+        for(int i=0; i<n; i++){
+            adjList.add(new ArrayList<Pair19>());
+        }
+        for(int[] road:roads){
+            int u=road[0];
+            int v=road[1];
+            int t=road[2];
+            adjList.get(u).add(new Pair19(v, t));
+            adjList.get(v).add(new Pair19(u, t));
+        }
+
+        long[] reqTime=new long[n];
+        Arrays.fill(reqTime, Long.MAX_VALUE);
+        reqTime[0]=0;
+
+        int[] visitCount=new int[n];
+        visitCount[0]=1;
+
+        Queue<Pair19> queue=new PriorityQueue<>((a,b)->{
+            if(a.getTime()!=b.getTime()){
+                return (int)(a.getTime()-b.getTime());
+            }else{
+                return a.getIntersection()-b.getIntersection();
+            }
+        });
+        queue.offer(new Pair19(0, 0));
+
+        while(!queue.isEmpty()){
+
+            Pair19 cur=queue.poll();
+            int intersection=cur.getIntersection();
+            long timeTaken=cur.getTime();
+
+            for(Pair19 adj:adjList.get(intersection)){
+
+                int adjInt=adj.getIntersection();
+                long timeToReach=timeTaken+adj.getTime();
+
+                if(reqTime[adjInt]>timeToReach){
+                    visitCount[adjInt]=visitCount[intersection];
+                    reqTime[adjInt]=timeToReach;
+                    queue.offer(new Pair19(adjInt, timeToReach));
+                }else if(reqTime[adjInt]==timeToReach){
+                    visitCount[adjInt] = (visitCount[adjInt] + visitCount[intersection]) % M;
+                    // queue.offer(new Pair(adjInt, timeToReach));
+                }
+            }
+        }
+        return visitCount[n-1];
+    }
+
 }
