@@ -1094,4 +1094,42 @@ public class Problems {
         return visitCount[n-1];
     }
 
+    // Q20.Bellman-Ford (Negative edge weight)
+    public int[] bellmanFord(int V, int[][] edges, int src) {
+        int[] dist=new int[V];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[src]=0;
+
+        for(int i=0; i<V-1; i++){
+            for(int[] edge:edges){
+                int u=edge[0];
+                int v=edge[1];
+                int w=edge[2];
+                if(dist[u]!=Integer.MAX_VALUE && dist[v]>dist[u]+w){
+                    dist[v]=dist[u]+w;
+                }
+            }
+        }
+
+        // Relaxing for n'th time to detect the cycle
+        for(int[] edge:edges){
+            int u=edge[0];
+            int v=edge[1];
+            int w=edge[2];
+            if(dist[u]!=Integer.MAX_VALUE && dist[v]>dist[u]+w){
+                // dist[v]=dist[u]+w;
+                return new int[]{-1};
+            }
+        }
+
+        // Mark unreachable vertices dist as 10^8
+        for(int i=0; i<dist.length; i++){
+            if(dist[i]==Integer.MAX_VALUE){
+                dist[i]=100000000;
+            }
+        }
+
+        return dist;
+    }
+
 }
