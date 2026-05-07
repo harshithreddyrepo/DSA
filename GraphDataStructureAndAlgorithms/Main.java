@@ -1,9 +1,6 @@
 package DSA_with_kunal.GraphDataStructureAndAlgorithms;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Main {
     public List<Integer> dfsOfGraph(int V, List<List<Integer>> adj) {
@@ -39,4 +36,230 @@ public class Main {
         }
         return result;
     }
+
+    // Dijkstra Algorithm
+    class Pair{
+        int node;
+        int dist;
+        public Pair(int node, int dist){
+            this.node=node;
+            this.dist=dist;
+        }
+    }
+    public int[] dijkstra(int V, int[][] edges, int src) {
+        Map<Integer, List<Pair>> adjList = new HashMap<>();
+        for (int[] edge : edges) {
+            // [u, v, distance]
+            adjList.computeIfAbsent(edge[0], k -> new ArrayList<>())
+                    .add(new Pair(edge[1], edge[2]));
+
+            adjList.computeIfAbsent(edge[1], k -> new ArrayList<>())
+                    .add(new Pair(edge[0], edge[2]));
+        }
+
+        PriorityQueue<Pair> minHeap=new PriorityQueue<>((a, b)-> {
+            if(a.dist!=b.dist){
+                return a.dist-b.dist;
+            }else{
+                return a.node-b.node;
+            }
+        });
+
+        int[] result=new int[V];
+        Arrays.fill(result, Integer.MAX_VALUE);
+
+        result[src]=0;
+        minHeap.offer(new Pair(src, 0));
+
+        while(!minHeap.isEmpty()){
+            Pair cur=minHeap.poll();
+            List<Pair> adjNodes=adjList.get(cur.node);
+            for(Pair adj:adjNodes){
+                if(result[adj.node]>cur.dist+adj.dist){
+                    result[adj.node]=cur.dist+adj.dist;
+                    minHeap.offer(new Pair(adj.node, result[adj.node]));
+                }
+            }
+        }
+        return result;
+    }
+
+    // Bellman-Ford (Negative edge weight)
+    public int[] bellmanFord(int V, int[][] edges, int src) {
+        int[] dist=new int[V];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[src]=0;
+
+        for(int i=0; i<V-1; i++){
+            for(int[] edge:edges){
+                int u=edge[0];
+                int v=edge[1];
+                int w=edge[2];
+                if(dist[u]!=Integer.MAX_VALUE && dist[v]>dist[u]+w){
+                    dist[v]=dist[u]+w;
+                }
+            }
+        }
+
+        // Relaxing for nth time to detect the cycle
+        for(int[] edge:edges){
+            int u=edge[0];
+            int v=edge[1];
+            int w=edge[2];
+            if(dist[u]!=Integer.MAX_VALUE && dist[v]>dist[u]+w){
+                // dist[v]=dist[u]+w;
+                return new int[]{-1};
+            }
+        }
+
+        // Mark unreachable vertices dist as 10^8
+        for(int i=0; i<dist.length; i++){
+            if(dist[i]==Integer.MAX_VALUE){
+                dist[i]=100000000;
+            }
+        }
+
+        return dist;
+    }
+
+    // Floyd Warshall Algorithm (Multi-Source Shortest Path Algorithm)
+    public void floydWarshall(int[][] dist) {
+        int n=dist.length;
+        // int[][] temp=new int[n][n];
+        // for(int i=0; i<n; i++){
+        //     for(int j=0; j<n; j++){
+        //         temp[i][j]=dist[i][j];
+        //     }
+        // }
+
+        for(int via=0; via<n; via++){
+            for(int i=0; i<n; i++){
+                for(int j=0; j<n; j++){
+                    //  dist[i][j]=Math.min(temp[i][j], temp[i][via]+temp[via][j]);
+                    if(dist[i][via]!=100000000 && dist[via][j]!=100000000){
+                        dist[i][j]=Math.min(dist[i][j], dist[i][via]+dist[via][j]);
+                    }
+
+                }
+            }
+            // for(int i=0; i<n; i++){
+            //   for(int j=0; j<n; j++){
+            //         temp[i][j]=dist[i][j];
+            //     }
+            // }
+
+        }
+
+    }
+
+    // Prims Algorithm (Minimum-Spanning-Tree)
+    class PrimsPair{
+        int node;
+        int parent;
+        int weight;
+        public PrimsPair(int node, int parent, int weight){
+            this.node=node;
+            this.parent=parent;
+            this.weight=weight;
+        }
+        int getNode(){
+            return node;
+        }
+        int getParent(){
+            return parent;
+        }
+        int getWeight(){
+            return weight;
+        }
+    }
+    public int spanningTree(int V, int[][] edges) {
+
+        List<List<PrimsPair>> adjList=new ArrayList<>();
+
+        for(int i=0; i<V; i++){
+            adjList.add(new ArrayList<PrimsPair>());
+        }
+
+        for(int[] edge: edges){
+            int u=edge[0];
+            int v=edge[1];
+            int w=edge[2];
+            adjList.get(u).add(new PrimsPair(v, u, w));
+            adjList.get(v).add(new PrimsPair(u, v, w));
+        }
+
+        int sum=0;
+
+        boolean[] visited=new boolean[V];
+
+        Queue<PrimsPair> queue=new PriorityQueue<>((a, b)->{
+            if(a.getWeight()!=b.getWeight()){
+                return a.getWeight()-b.getWeight();
+            }else{
+                return a.getNode()-b.getNode();
+            }
+        });
+
+        queue.offer(new PrimsPair(0, -1, 0));
+
+        while(!queue.isEmpty()){
+            PrimsPair cur=queue.poll();
+            int node=cur.getNode();
+            int weight=cur.getWeight();
+            if(!visited[node]){
+                visited[node]=true;
+                sum+=weight;
+                for(PrimsPair adj:adjList.get(node)){
+                    int newNode=adj.getNode();
+                    int newParent=adj.getParent();
+                    int newWeight=adj.getWeight();
+                    queue.offer(new PrimsPair(newNode, newParent, newWeight));
+                }
+            }
+        }
+
+        return sum;
+    }
+
+    // Disjoint Set Data Structure
+    class Disjoint{
+
+        // parent array is also used to store the size in NEGATIVE value
+        int[] parent;
+
+        public Disjoint(int n){
+            // Works for both 0-Indexed and 1-Indexed Graphs
+            parent=new int[n+1];
+            // Every Node is an Individual Set
+            Arrays.fill(parent, -1);
+        }
+
+        public int findUltPrnt(int node){
+            if(parent[node]<0){
+                return node;
+            }
+            parent[node]=findUltPrnt(parent[node]);
+            return parent[node];
+        }
+
+        public void unionBySize(int u, int v){
+            int uUltPrnt=findUltPrnt(u);
+            int vUltPrnt=findUltPrnt(v);
+            if(uUltPrnt==vUltPrnt){
+                // Both belongs to same set
+                return;
+            }
+            // Set size is stored in NEGATIVE form (pay attention on Logical Operators)
+            if(parent[uUltPrnt]<=parent[vUltPrnt]){
+                // uUltPrnt set contains more or equal nodes
+                parent[uUltPrnt]+=parent[vUltPrnt];
+                parent[vUltPrnt]=uUltPrnt;
+            }else {
+                // vUltPrnt set contains more nodes
+                parent[vUltPrnt]+=parent[uUltPrnt];
+                parent[uUltPrnt]=vUltPrnt;
+            }
+        }
+    }
+
 }
