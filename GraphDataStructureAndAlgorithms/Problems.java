@@ -1,6 +1,7 @@
 package DSA_with_kunal.GraphDataStructureAndAlgorithms;
 
 import java.util.*;
+import DSA_with_kunal.GraphDataStructureAndAlgorithms.Main.DSU;
 
 public class Problems {
     // Q1.Number of Provinces
@@ -1089,6 +1090,203 @@ public class Problems {
         }
 
         return result;
+    }
+
+    // Q23.Number of Operations to Make Network Connected
+    public int makeConnected(int n, int[][] connections) {
+        if(connections.length<n-1){
+            return -1;
+        }
+        Main.DSU ds=new Main.DSU(n);
+        Queue<int[]> queue=new ArrayDeque<>();
+        for(int[] connection:connections){
+            queue.offer(connection);
+        }
+
+        while(!queue.isEmpty()){
+            int[] cur=queue.poll();
+            int u=cur[0];
+            int v=cur[1];
+            int uUPar=ds.findUPar(u);
+            int vUPar=ds.findUPar(v);
+            if(uUPar!=vUPar){
+                ds.union(u, v);
+            }
+        }
+
+        int components=0;
+        int[] parent=ds.getParent();
+        for(int i=0; i<n; i++){
+            if(parent[i]<0){
+                components++;
+            }
+        }
+
+        return components-1;
+    }
+
+    // Q24.Merge Accounts
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        int n=accounts.size();
+        DSU ds=new DSU(n);
+        Map<String, Integer> map=new HashMap<>();
+        for(int i=0; i<n; i++){
+            int m=accounts.get(i).size();
+            for(int j=1; j<m; j++){
+                String mail=accounts.get(i).get(j);
+                if(map.containsKey(mail)){
+                    int indx=map.get(mail);
+                    ds.union(indx, i);
+                }else{
+                    map.put(mail, i);
+                }
+            }
+        }
+
+        int[] parent=ds.getParent();
+        List<TreeSet<String>> LOS=new ArrayList<>();
+        for(int i=0; i<n; i++){
+            LOS.add(new TreeSet<String>());
+        }
+        for(int i=0; i<n; i++){
+            int UPrnt=parent[i]<0?i:ds.findUPar(i);
+            List<String> acc=accounts.get(i);
+            for(int j=1; j<acc.size(); j++){
+                LOS.get(UPrnt).add(acc.get(j));
+            }
+        }
+        List<List<String>> result=new ArrayList<>();
+        for(int i=0; i<n; i++){
+            if(parent[i]<0){
+                result.add(new ArrayList<>(LOS.get(i)));
+                result.get(result.size()-1).add(0, accounts.get(i).get(0));
+            }
+        }
+        return result;
+    }
+
+    // Q25.Number of Islands II
+    public static int[] numOfIslandsII(int n, int m, int[][] q) {
+        DSU dsu=new DSU(n*m);
+        int[][] grid=new int[n][m];
+        int[] result=new int[q.length];
+        int[] deltaRow = {-1, 1, 0, 0};
+        int[] deltaCol = {0, 0, -1, 1};
+        int count=0;
+        for(int i=0; i<q.length; i++){
+            int x=q[i][0];
+            int y=q[i][1];
+            // Check if it is already visited
+            if(grid[x][y]==1){
+                result[i]=count;
+                continue;
+            }
+            // Mark it as visited
+            grid[x][y]=1;
+            count++;
+            int u=x*m+y;
+            // Check Adjacent visited Cell
+            for(int j=0; j<4; j++){
+                int r=x+deltaRow[j];
+                int c=y+deltaCol[j];
+                if((r>=0&&r<n && c>=0&&c<m) && grid[r][c]==1){
+                    int v=r*m+c;
+                    int uUPrnt=dsu.findUPar(u);
+                    int vUPrnt=dsu.findUPar(v);
+                    if(uUPrnt!=vUPrnt){
+                        count--;
+                        dsu.union(uUPrnt, vUPrnt);
+                    }
+                }
+            }
+            result[i]=count;
+        }
+
+        return result;
+    }
+
+    // Q26.Making A Large Island
+    public int largestIsland(int[][] grid) {
+        int n=grid.length;
+        boolean[][] visited=new boolean[n][n];
+        DSU dsu=new DSU(n*n);
+        int maxArea=1;
+        int[] deltaRow={-1, 0, +1, 0};
+        int[] deltaCol={0, +1, 0, -1};
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(grid[i][j]==1 && !visited[i][j]){
+                    int x=i;
+                    int y=j;
+                    int u=x*n+y;
+                    int uUPrnt=dsu.findUPar(u);
+                    for(int k=0; k<4; k++){
+                        int r=x+deltaRow[k];
+                        int c=y+deltaCol[k];
+                        if(r>=0 && r<n && c>=0 && c<n && grid[r][c]==1){
+                            int v=r*n+c;
+                            int vUPrnt=dsu.findUPar(v);
+                            if(uUPrnt!=vUPrnt){
+                                dsu.union(uUPrnt, vUPrnt);
+                            }
+                        }
+                    }
+                    visited[i][j]=true;
+                }
+            }
+        }
+        int[] parent=dsu.getParent();
+        boolean flag=false;
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(grid[i][j]==0){
+                    int area=1;
+                    Set<Integer> set=new HashSet<>();
+                    for(int k=0; k<4; k++){
+                        int r=i+deltaRow[k];
+                        int c=j+deltaCol[k];
+                        if(r>=0 && r<n && c>=0 && c<n && grid[r][c]==1){
+                            int u=r*n+c;
+                            int uUPrnt=dsu.findUPar(u);
+                            if(!set.contains(uUPrnt)){
+                                set.add(uUPrnt);
+                                area+=-1*parent[uUPrnt];
+                            }
+                        }
+                    }
+                    maxArea=Math.max(maxArea, area);
+                    flag=true;
+                }
+            }
+        }
+
+        return flag?maxArea:n*n;
+
+    }
+
+    // Q27.Most Stones Removed With Same Row or Column
+    public int removeStones(int[][] stones) {
+        int n=0;
+        int m=0;
+        for(int[] stone: stones){
+            n=Math.max(n, stone[0]);
+            m=Math.max(m, stone[1]);
+        }
+        DSU dsu=new DSU(n+m+2);
+        for(int[] stone: stones){
+            int u=stone[0];
+            int v=n+1+stone[1];
+            dsu.union(u, v);
+        }
+        Set<Integer> set=new HashSet<>();
+        for(int[] stone:stones){
+            int uUPrnt=dsu.findUPar(stone[0]);
+            int vUPrnt=dsu.findUPar(n+1+stone[1]);
+            set.add(uUPrnt);
+        }
+        int count=set.size();
+        return stones.length-count;
     }
 
 }

@@ -38,7 +38,7 @@ public class Main {
     }
 
     // Dijkstra Algorithm
-    class Pair{
+    static class Pair{
         int node;
         int dist;
         public Pair(int node, int dist){
@@ -153,7 +153,7 @@ public class Main {
     }
 
     // Prims Algorithm (Minimum-Spanning-Tree)
-    class PrimsPair{
+    static class PrimsPair{
         int node;
         int parent;
         int weight;
@@ -221,45 +221,103 @@ public class Main {
         return sum;
     }
 
-    // Disjoint Set Data Structure
-    class Disjoint{
-
-        // parent array is also used to store the size in NEGATIVE value
-        int[] parent;
-
-        public Disjoint(int n){
-            // Works for both 0-Indexed and 1-Indexed Graphs
+    // Disjoint Set Union
+    static class DSU{
+        private int[] parent;
+        public DSU(int n){
             parent=new int[n+1];
-            // Every Node is an Individual Set
             Arrays.fill(parent, -1);
         }
-
-        public int findUltPrnt(int node){
+        public int findUPar(int node){
             if(parent[node]<0){
                 return node;
             }
-            parent[node]=findUltPrnt(parent[node]);
+            // Path Compression
+            parent[node]=findUPar(parent[node]);
             return parent[node];
         }
-
-        public void unionBySize(int u, int v){
-            int uUltPrnt=findUltPrnt(u);
-            int vUltPrnt=findUltPrnt(v);
-            if(uUltPrnt==vUltPrnt){
+        public void union(int u, int v){
+            int uUPar=findUPar(u);
+            int vUPar=findUPar(v);
+            if(uUPar==vUPar){
                 // Both belongs to same set
                 return;
             }
-            // Set size is stored in NEGATIVE form (pay attention on Logical Operators)
-            if(parent[uUltPrnt]<=parent[vUltPrnt]){
-                // uUltPrnt set contains more or equal nodes
-                parent[uUltPrnt]+=parent[vUltPrnt];
-                parent[vUltPrnt]=uUltPrnt;
-            }else {
-                // vUltPrnt set contains more nodes
-                parent[vUltPrnt]+=parent[uUltPrnt];
-                parent[uUltPrnt]=vUltPrnt;
+            if(uUPar<=vUPar){
+                // uUPar set contains more elements
+                parent[uUPar]+=parent[vUPar];
+                parent[vUPar]=uUPar;
+            }else{
+                // vUPar set contains more elements
+                parent[vUPar]+=parent[uUPar];
+                parent[uUPar]=vUPar;
             }
         }
+        public int[] getParent(){
+            return parent;
+        }
+    }
+
+    // Kruskal's Algorithm (Minimum-Spanning-Tree)
+    static class KruskalsPair{
+        int u;
+        int v;
+        int w;
+        public KruskalsPair(int u, int v, int w){
+            this.u=u;
+            this.v=v;
+            this.w=w;
+        }
+        public int getU(){
+            return u;
+        }
+        public int getV(){
+            return v;
+        }
+        public int getW(){
+            return w;
+        }
+    }
+    static int kruskalsMST(int V, int[][] edges) {
+
+        int sum=0;
+
+        DSU ds=new DSU(V);
+
+        Queue<KruskalsPair> queue=new PriorityQueue<>((a,b)->{
+            if(a.getW()!=b.getW()){
+                return a.getW()-b.getW();
+            }else if(a.getU()!=b.getU()){
+                return a.getU()-b.getU();
+            }else{
+                return a.getV()-b.getV();
+            }
+        });
+
+        for(int[] edge:edges){
+            int u=edge[0];
+            int v=edge[1];
+            int w=edge[2];
+            queue.offer(new KruskalsPair(u, v, w));
+        }
+
+        while(!queue.isEmpty()){
+            KruskalsPair cur=queue.poll();
+            int u=cur.getU();
+            int v=cur.getV();
+            int w=cur.getW();
+
+            int uUPar=ds.findUPar(u);
+            int vUPar=ds.findUPar(v);
+
+            if(uUPar!=vUPar){
+                sum+=w;
+                ds.union(u, v);
+            }
+        }
+
+        return sum;
+
     }
 
 }
