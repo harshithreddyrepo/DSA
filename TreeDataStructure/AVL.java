@@ -25,6 +25,13 @@ public class AVL {
         return node.height;
     }
 
+    public int height(){
+        if(root==null){
+            return -1;
+        }
+        return root.height;
+    }
+
     public boolean isEmpty() {
         return root == null;
     }

@@ -15,15 +15,20 @@ public class Main {
 //        bst.inOrder();
 //        System.out.println();
 ////        bst.postOrder();
-//        AVL avl=new AVL();
-//        avl.populate(new int[]{1,2,3,4,5,6,7,8,9,10});
-//        avl.prettyDisplay();
-//        System.out.println(avl.balanced());
-        SegmentTree st=new SegmentTree(new int[]{3,8,7,6,-2,-8,4,9});
-        int sum=st.findSumOfRange(0,7);
-        System.out.println(sum);
-        st.update(4,0);
-        sum=st.findSumOfRange(0,7);
-        System.out.println(sum);
+        AVL avl=new AVL();
+       // avl.populate(new int[]{1,2,3,4,5,6,7,8,9,10});
+        for(int i=0; i<1000; i++){
+            avl.insert(i);
+        }
+        avl.prettyDisplay();
+        System.out.println(avl.balanced());
+        System.out.println(avl.height());
+
+//        SegmentTree st=new SegmentTree(new int[]{3,8,7,6,-2,-8,4,9});
+//        int sum=st.findSumOfRange(0,7);
+//        System.out.println(sum);
+//        st.update(4,0);
+//        sum=st.findSumOfRange(0,7);
+//        System.out.println(sum);
     }
 }

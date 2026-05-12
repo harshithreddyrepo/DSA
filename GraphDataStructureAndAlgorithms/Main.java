@@ -320,4 +320,95 @@ public class Main {
 
     }
 
+    // Kosaraju's Algorithm
+    // Function to find number of strongly connected components in the graph
+    public int kosaraju(int V, int[][] edges) {
+        List<List<Integer>> adjList=new ArrayList<>();
+        List<List<Integer>> adjListT=new ArrayList<>();
+        for(int i=0; i<V; i++){
+            adjList.add(new ArrayList<>());
+            adjListT.add(new ArrayList<>());
+        }
+        for(int [] edge: edges){
+            int u=edge[0];
+            int v=edge[1];
+            adjList.get(u).add(v);
+            adjListT.get(v).add(u);
+        }
+
+        boolean[] visited=new boolean[V];
+        Stack<Integer> stack=new Stack<>();
+        // Ordering
+        for(int i=0; i<V; i++){
+            if(!visited[i]){
+                dfs(i, stack, visited, adjList);
+            }
+        }
+
+        Arrays.fill(visited, false);
+        // Component Extraction
+        int count=0;
+        while(!stack.empty()){
+            int cur=stack.pop();
+            if(!visited[cur]){
+                dfs(cur, new Stack<Integer>(), visited, adjListT);
+                count++;
+            }
+        }
+
+        return count;
+    }
+    public void dfs(int node, Stack<Integer> stack, boolean[] visited, List<List<Integer>> adjList){
+        visited[node]=true;
+        for(int adj:adjList.get(node)){
+            if(!visited[adj]){
+                dfs(adj, stack, visited, adjList);
+            }
+        }
+        stack.push(node);
+    }
+
+    // Tarjan's Algorithm
+    // Bridges in Graph
+    private static int timer=0;
+    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        List<List<Integer>> adjList=new ArrayList<>();
+        for(int i=0; i<n; i++){
+            adjList.add(new ArrayList<>());
+        }
+        for(List<Integer> connection: connections){
+            int u=connection.get(0);
+            int v=connection.get(1);
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+
+        int[] tin=new int[n];
+        int[] low=new int[n];
+
+        return dfs(0, -1, adjList, tin, low);
+    }
+    private List<List<Integer>> dfs(int node, int parent, List<List<Integer>> adjList, int[] tin, int[] low){
+        List<List<Integer>> critical=new ArrayList<>();
+
+        tin[node]=timer++;
+        low[node]=tin[node];
+        for(int adj: adjList.get(node)){
+            if(tin[adj]==0){
+                critical.addAll(dfs(adj, node, adjList, tin, low));
+                if(tin[node]<low[adj]){
+                    critical.add(new ArrayList<>(Arrays.asList(node, adj)));
+                }
+            }
+            if(adj!=parent){
+                low[node]=Math.min(low[node], low[adj]);
+            }
+        }
+        // for(int adj: adjList.get(node)){
+        //    if(adj!=parent){
+        //         low[node]=Math.min(low[node], low[adj]);
+        // }
+        return critical;
+    }
+
 }

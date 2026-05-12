@@ -11,10 +11,6 @@ public class BinarySearchTree {
         Node right;
         int height;
 
-        Node() {
-
-        }
-
         Node(int value) {
             this.value = value;
         }
